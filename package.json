@@ -16,6 +16,7 @@
     "vue-template-compiler": "2.7.10"
   },
   "devDependencies": {
-    "@nuxtjs/vuetify": "^1.12.3"
+    "@nuxtjs/vuetify": "^1.12.3",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   }
 }
