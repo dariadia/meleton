@@ -45,7 +45,7 @@
           <v-container>
             <v-form @submit.prevent="addEvent">
               <v-text-field v-model="name" type="text" label="Event title (*)"></v-text-field>
-              <v-text-field counter="300" v-model="desc" type="text" label="Event description (*)"></v-text-field>
+              <v-text-field counter="300" v-model="desc" type="text" label="Notification text (*)"></v-text-field>
               <v-combobox :items="names" v-model="eventType" vuetifyjs="primary"
                 label="Choose event type (*)"></v-combobox>
               <v-text-field v-model="start" type="date" label="Start (*)"></v-text-field>
@@ -63,7 +63,7 @@
           <v-container>
             <v-form @submit.prevent="addEvent">
               <v-text-field v-model="name" type="text" label="Event title (*)"></v-text-field>
-              <v-text-field counter="300" v-model="desc" type="text" label="Event description (*)"></v-text-field>
+              <v-text-field counter="300" v-model="desc" type="text" label="Notification text (*)"></v-text-field>
               <v-combobox :items="names" v-model="eventType" vuetifyjs="primary"
                 label="Choose event type (*)"></v-combobox>
               <v-text-field v-model="start" type="date" label="Start (*)"></v-text-field>
@@ -100,7 +100,7 @@
                 {{ selectedEvent.desc }}
               </form>
               <form v-else>
-                <v-textarea v-model="selectedEvent.desc" type="text" rows="3" placeholder="Change description">
+                <v-textarea v-model="selectedEvent.desc" type="text" rows="3" placeholder="Change notification text">
                 </v-textarea>
               </form>
             </v-card-text>
@@ -254,11 +254,11 @@ export default {
         const message = 'Please check that you have filled out these fields:'
         let _message = []
         if (!isNameValid) _message.push('event name')
-        if (!this.desc) _message.push('event description')
+        if (!this.desc) _message.push('notification text')
         if (!this.eventType) _message.push('event event type')
         if (!isDateValid(this.start)) _message.push('event start date')
         if (!isDateValid(this.end)) _message.push('event end date')
-        const extraMessage = this.desc?.length > 300 ? "Event description must be shorter!" : ''
+        const extraMessage = this.desc?.length > 300 ? "Event notification must be shorter!" : ''
         const extraTimeMessage = this.start > this.end ? "Your event should end after it starts!" : ''
 
         // simplification: just alert all the errors together
