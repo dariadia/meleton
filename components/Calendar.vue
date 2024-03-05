@@ -31,7 +31,7 @@
           <v-menu bottom right>
             <template v-slot:activator="{ on }">
               <v-btn outlined v-on="on">
-                <span>{{ typeToLabel[type] }}</span>
+                <v-container tag="span">{{ typeToLabel[type] }}</v-container>
                 <v-icon right>mdi-menu-down</v-icon>
               </v-btn>
             </template>
@@ -102,15 +102,15 @@
               </v-toolbar-title>
             </v-toolbar>
             <v-card-text>
-              <span v-if="currentlyEditing !== selectedEvent.id">{{ new Date(selectedEvent.start)?.toDateString()
-                }}</span>
+              <v-container tag="span" v-if="currentlyEditing !== selectedEvent.id">{{ new Date(selectedEvent.start)?.toDateString()
+                }}</v-container>
               <v-text-field v-else v-model="selectedEvent.start" type="datetime-local" label="Start (*)"></v-text-field>
-              <span v-if="currentlyEditing !== selectedEvent.id"> – </span>
-              <span v-if="currentlyEditing !== selectedEvent.id">{{ new Date(selectedEvent.end)?.toDateString()
-                }}</span>
+              <v-container tag="span" v-if="currentlyEditing !== selectedEvent.id"> – </v-container>
+              <v-container tag="span" v-if="currentlyEditing !== selectedEvent.id">{{ new Date(selectedEvent.end)?.toDateString()
+                }}</v-container>
               <v-text-field v-else v-model="selectedEvent.end" type="datetime-local" label="End (*)"></v-text-field>
               <v-divider></v-divider>
-              <span v-if="currentlyEditing !== selectedEvent.id">{{ selectedEvent.eventType }}</span>
+              <v-container v-if="currentlyEditing !== selectedEvent.id">{{ selectedEvent.eventType }}</v-container>
               <v-combobox v-else :items="names" v-model="selectedEvent.eventType" vuetifyjs="primary"
                 label="Choose event type (*)"></v-combobox>
               <form v-if="currentlyEditing !== selectedEvent.id">

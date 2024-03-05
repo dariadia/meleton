@@ -6,12 +6,12 @@
       </v-container>
     </v-main>
     <v-footer :absolute="!fixed">
-      <span>
+      <v-container tag="span">
         {{ new Date().getFullYear() }} ft.
         <NuxtLink class="text-decoration-none" to="https://github.com/dariadia/" target="_blank" rel="noopener">
           &copy;dariadia
         </NuxtLink>
-      </span>
+      </v-container>
     </v-footer>
   </v-app>
 </template>
