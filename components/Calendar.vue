@@ -15,11 +15,29 @@
           <v-btn fab text small @click="next">
             <v-icon small>mdi-chevron-right</v-icon>
           </v-btn>
-          <v-toolbar-title class="text-no-wrap" v-if="$refs.calendar">
-            todo: select year
+          <v-toolbar-title v-if="$refs.calendar">
+            <v-row >{{ $refs.calendar.title }}
+            <div class="text-center">
+              <v-dialog v-model="monthYearPicker" width="500">
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn color="primary" v-bind="attrs" v-on="on" @click="setCurrent">
+                    Set year
+                  </v-btn>
+                </template>
+                <v-card>
+                  <v-card-title class="text-h5 grey lighten-2">
+                    Set month and/or year.
+                  </v-card-title>
+                  <v-card-text>
+                    <v-select :items="months" v-model="nowMonth" vuetifyjs="primary" label="month">{{ nowMonth }}</v-select>
+                    <v-select :items="years" v-model="nowYear" vuetifyjs="primary" label="year">{{ nowYear }}</v-select>
+                  </v-card-text>
+                </v-card>
+              </v-dialog>
+            </div></v-row>
           </v-toolbar-title>
-          <v-container class="flex-grow-1"></v-container>
           <v-menu bottom right>
+
             <template v-slot:activator="{ on }">
               <v-btn outlined v-on="on">
                 <span>{{ typeToLabel[type] }}</span>
@@ -79,8 +97,7 @@
       <v-sheet height="600">
         <v-calendar ref="calendar" v-model="focus" color="primary" :events="events" :event-color="getEventColor"
           :event-margin-bottom="3" :now="today" :type="type" @click:event="showEvent" @click:more="viewDay"
-          @click:time="setPopupDate"
-          @click:date="setPopupDate" @change="updateRange"></v-calendar>
+          @click:time="setPopupDate" @click:date="setPopupDate" @change="updateRange"></v-calendar>
         <v-menu v-model="selectedOpen" :close-on-content-click="false" :activator="selectedElement" full-width offset-x>
           <v-card color="grey lighten-4" :width="350" flat>
             <v-toolbar :color="selectedEvent.color">
@@ -103,7 +120,7 @@
               <span v-if="currentlyEditing !== selectedEvent.id">{{ new Date(selectedEvent.end)?.toDateString()
                 }}</span>
               <v-text-field v-else v-model="selectedEvent.end" type="datetime-local" label="End (*)"></v-text-field>
-              <hr />
+              <v-divider></v-divider>
               <span v-if="currentlyEditing !== selectedEvent.id">{{ selectedEvent.eventType }}</span>
               <v-combobox v-else :items="names" v-model="selectedEvent.eventType" vuetifyjs="primary"
                 label="Choose event type (*)"></v-combobox>
@@ -138,6 +155,8 @@ export default {
   props: ['checkIfHasDue'],
   data: () => ({
     localStorageKey: "calendarEvents",
+    nowMonth: null,
+    nowYear: null,
     today: new Date().toISOString().substr(0, 10),
     focus: new Date().toISOString().substr(0, 10),
     type: 'month',
@@ -146,6 +165,7 @@ export default {
       week: 'Week',
       day: 'Day',
     },
+    monthYearPicker: false,
     weekday: [1, 2, 3, 4, 5, 6, 0],
     name: null,
     desc: null,
@@ -159,8 +179,38 @@ export default {
     events: [],
     popup: false,
     popupDate: false,
-    colors: ['deep-purple lighten-3', 'red lighten-3', 'cyan darken-4', 'cyan darken-1', 'amber', 'grey darken-1'],
-    names: ['Meeting', 'Holiday', 'Travel', 'Personal event', 'Birthday', 'Conference', 'Party'],
+    colors: [
+      'deep-purple lighten-3',
+      'red lighten-3',
+      'cyan darken-4',
+      'cyan darken-1',
+      'amber',
+      'grey darken-1',
+    ],
+    names: [
+      'Meeting',
+      'Holiday',
+      'Travel',
+      'Personal event',
+      'Birthday',
+      'Conference',
+      'Party',
+    ],
+    months: [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ],
+    years: Array.from({ length: 20 }, (_, i) => i + 2024)
   }),
   mounted() {
     this.getEvents()
@@ -170,6 +220,14 @@ export default {
       const _data = localStorage.getItem(this.localStorageKey)
       if (!_data) return
       this.events = JSON.parse(_data)
+    },
+    setCurrent() {
+      /* simplification: I couldn't quickly find the docs on $refs.calendar,
+        tried guessing and using a few functions. This sollution seems good enough for now.
+      */
+     console.log($refs.calendar)
+      this.nowMonth = this.$refs.calendar.title.split(" ")[0]
+      this.nowYear = Number(this.$refs.calendar.title.split(" ")[1])
     },
     setPopupDate({ date }) {
       this.popupDate = true
@@ -259,7 +317,6 @@ export default {
         this._props.checkIfHasDue()
         alert("Success! Event has been added.")
       } else {
-        console.log(this.eventType)
         const message = 'Please check that you have filled out these fields:'
         let _message = []
         if (!isNameValid) _message.push('event name')
