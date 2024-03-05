@@ -266,7 +266,6 @@ export default {
         this.popup = false
         this.popupDate = false
         this.getEvents()
-        console.log(this)
         this._props.checkIfHasDue()
         alert("Success! Event has been added.")
       } else {
@@ -302,6 +301,7 @@ export default {
       this.selectedOpen = false
       this.currentlyEditing = null
       this.getEvents()
+      this._props.checkIfHasDue()
     },
     deleteEvent(event) {
       this.events = this.events.filter(_event => _event.id !== event)
