@@ -3,7 +3,7 @@
     <v-col>
       <v-sheet height="64">
         <v-toolbar flat color="white">
-          <v-btn class="mr-4" color="primary" dark @click.stop="popup = true">
+          <v-btn class="mr-4" color="primary" @click.stop="popup = true">
             New Event
           </v-btn>
           <v-btn outlined class="mr-4" @click="setToday">
@@ -174,7 +174,8 @@ export default {
     setPopupDate({ date }) {
       this.popupDate = true
       this.focus = date
-      this.start = date
+      const now = new Date()
+      this.start = `${date} ${now.getHours()}:${now.getMinutes()}`
     },
     viewDay({ date }) {
       this.focus = date
@@ -224,10 +225,11 @@ export default {
     },
     addEvent() {
       const { isNameValid, isDateValid, isValid } = this.validateFields({ name: this.name, desc: this.desc, start: this.start, end: this.end, eventType: this.eventType })
-      const _start = this.start.split("T")
-      const _end = this.end.split("T")
 
       if (isValid) {
+        const _start = this.start?.split("T")
+        const _end = this.end?.split("T")
+
         // simplification: use the timestamp when this event was created as its id
         this.events.push({
           id: Date.now(),
