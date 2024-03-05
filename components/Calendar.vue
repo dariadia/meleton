@@ -233,7 +233,7 @@ export default {
           this.eventType = '',
           this.start = '',
           this.end = ''
-          
+
         this.popup = false
         alert("Success! Event has been added.")
       } else {
@@ -253,8 +253,8 @@ export default {
     async deleteEvent(event) {
       this.events = this.events.filter(_event => _event.id !== event.id)
       this.setToLocalStorage()
-      this.selectedOpen = false,
-        this.getEvents()
+      this.selectedOpen = false
+      this.getEvents()
     },
   },
 }
