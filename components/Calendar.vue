@@ -197,13 +197,10 @@ export default {
     goToDate() {
       this.focus = this.dateInView
     },
-    setPopupDate({ date }) {
+    setPopupDate({ date, time }) {
       this.popupDate = true
       this.focus = date
-      const now = new Date()
-      let minutes = now.getMinutes()
-      if (minutes < 10) minutes = '0' + minutes
-      this.start = `${date} ${now.getHours()}:${minutes}`
+      this.start = `${date} ${time || "00:00"}`
     },
     viewDay({ date }) {
       this.focus = date
