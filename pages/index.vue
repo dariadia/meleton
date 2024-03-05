@@ -1,10 +1,10 @@
 <template>
   <v-row justify="center" align="center">
     <v-col cols="12" sm="8" md="10">
-      <div class="text-h3 mb-4 text-center">Meleton: My Calendar</div>
-      <div>
-        <Alert v-for="item in hasDue" :key="item.id" :event="item" />
-      </div>
+      <v-container class="text-h3 mb-4 text-center">Meleton: My Calendar</v-container>
+      <v-container>
+        <Alert v-for="item in hasDue" :key="item.id" :event="item" :dueTime="dueTime" />
+      </v-container>
       <Calendar :checkIfHasDue="checkIfHasDue" />
     </v-col>
   </v-row>
@@ -17,6 +17,7 @@ export default {
     localStorageKey: "calendarEvents",
     hasDue: [],
     interval: null,
+    dueTime: null,
   }),
   mounted() {
     const MINUTE = 60 * 1000
@@ -38,6 +39,19 @@ export default {
         return isFuture ? _date - HOUR <= Date.now() : _date + HOUR <= Date.now()
       }
       this.hasDue = _events.filter(event => checkTime(event.start))
+      
+      if (this.hasDue.length) {
+        // We could run this inside <Alert /> but I would rather not have two separate intervals running
+        this.hasDue.forEach(event => this.calcDue(event))
+      }
+    },
+    calcDue(event) {
+      let nowDate = new Date()
+      let achiveDate = new Date(event.start)
+      var result = (achiveDate - nowDate) + 1000
+      var minutes = Math.floor((result / 1000 / 60) % 60)
+      if (minutes < 10) minutes = '0' + minutes
+      this.dueTime = minutes
     }
   }
 }

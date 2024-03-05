@@ -15,10 +15,10 @@
           <v-btn fab text small @click="next">
             <v-icon small>mdi-chevron-right</v-icon>
           </v-btn>
-          <v-toolbar-title v-if="$refs.calendar">
-            {{ $refs.calendar.title }}
+          <v-toolbar-title class="text-no-wrap" v-if="$refs.calendar">
+            todo: select year
           </v-toolbar-title>
-          <div class="flex-grow-1"></div>
+          <v-container class="flex-grow-1"></v-container>
           <v-menu bottom right>
             <template v-slot:activator="{ on }">
               <v-btn outlined v-on="on">
@@ -94,7 +94,6 @@
                 <v-textarea class="pt-4" v-model="selectedEvent.name" type="text" rows="1"
                   placeholder="Change event name" background-color="grey lighten-2"></v-textarea>
               </v-toolbar-title>
-              <div class="flex-grow-1"></div>
             </v-toolbar>
             <v-card-text>
               <span v-if="currentlyEditing !== selectedEvent.id">{{ new Date(selectedEvent.start)?.toDateString()
@@ -258,6 +257,7 @@ export default {
         this._props.checkIfHasDue()
         alert("Success! Event has been added.")
       } else {
+        console.log(this.eventType)
         const message = 'Please check that you have filled out these fields:'
         let _message = []
         if (!isNameValid) _message.push('event name')
