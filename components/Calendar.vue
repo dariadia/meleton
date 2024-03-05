@@ -15,7 +15,9 @@
           <v-btn fab text small @click="next">
             <v-icon small>mdi-chevron-right</v-icon>
           </v-btn>
-          <v-toolbar-title>{{ title }}</v-toolbar-title>
+          <v-toolbar-title v-if="$refs.calendar">
+            {{ $refs.calendar.title }}
+          </v-toolbar-title>
           <div class="flex-grow-1"></div>
           <v-menu bottom right>
             <template v-slot:activator="{ on }">
@@ -156,6 +158,7 @@ export default {
     title() {
       const { start, end } = this
       if (!start || !end) return ''
+      console.log(this.type)
       const startMonth = this.monthFormatter(start)
       const startYear = start.year
       const startDay = start.day + start.day
