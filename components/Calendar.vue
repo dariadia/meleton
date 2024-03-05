@@ -15,27 +15,29 @@
           <v-btn fab text small @click="next">
             <v-icon small>mdi-chevron-right</v-icon>
           </v-btn>
-          <v-toolbar-title v-if="$refs.calendar">
-            <v-row >{{ $refs.calendar.title }}
-            <div class="text-center">
-              <v-dialog v-model="monthYearPicker" width="500">
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn color="primary" v-bind="attrs" v-on="on" @click="setCurrent">
-                    Set year
-                  </v-btn>
-                </template>
-                <v-card>
-                  <v-card-title class="text-h5 grey lighten-2">
-                    Set month and/or year.
-                  </v-card-title>
-                  <v-card-text>
-                    <v-select :items="months" v-model="nowMonth" vuetifyjs="primary" label="month">{{ nowMonth }}</v-select>
-                    <v-select :items="years" v-model="nowYear" vuetifyjs="primary" label="year">{{ nowYear }}</v-select>
-                  </v-card-text>
-                </v-card>
-              </v-dialog>
-            </div></v-row>
-          </v-toolbar-title>
+          <v-toolbar-title v-if="$refs.calendar">{{ $refs.calendar.title }}</v-toolbar-title>
+          <v-row class="ml-4">
+            <v-dialog v-model="monthYearPicker" width="500">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn color="primary" v-bind="attrs" v-on="on" @click="setCurrent">
+                  Set M/Y
+                </v-btn>
+              </template>
+              <v-card>
+                <v-card-title class="text-h5 grey lighten-2">
+                  Set month and/or year.
+                </v-card-title>
+                <v-card-text>
+                  <v-select :items="months" v-model="nowMonth" vuetifyjs="primary" label="month">{{ nowMonth
+                    }}</v-select>
+                  <v-select :items="years" v-model="nowYear" vuetifyjs="primary" label="year">{{ nowYear }}</v-select>
+                  <v-btn color="primary" @click="setCurrent">
+                  Go to this date
+                </v-btn>
+                </v-card-text>
+              </v-card>
+            </v-dialog>
+          </v-row>
           <v-menu bottom right>
 
             <template v-slot:activator="{ on }">
@@ -225,9 +227,9 @@ export default {
       /* simplification: I couldn't quickly find the docs on $refs.calendar,
         tried guessing and using a few functions. This sollution seems good enough for now.
       */
-     console.log($refs.calendar)
       this.nowMonth = this.$refs.calendar.title.split(" ")[0]
       this.nowYear = Number(this.$refs.calendar.title.split(" ")[1])
+      console.log( this.$refs.calendar)
     },
     setPopupDate({ date }) {
       this.popupDate = true
