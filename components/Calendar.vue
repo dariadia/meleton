@@ -52,6 +52,12 @@
             <v-form @submit.prevent="addEvent">
               <v-text-field v-model="name" type="text" label="Event title (*)"></v-text-field>
               <v-text-field v-model="desc" type="text" label="Event description (*)"></v-text-field>
+              <v-select
+          :items="names"
+          v-model="eventType"
+          vuetifyjs="primary"
+          label="Choose event type (*)"
+        ></v-select>
               <v-text-field v-model="start" type="date" label="Start (*)"></v-text-field>
               <v-text-field v-model="end" type="date" label="End (*)"></v-text-field>
               <v-btn type="submit" color="primary" class="mr-4" @click.stop="popup = false">
@@ -124,6 +130,7 @@ export default {
     weekday: [1, 2, 3, 4, 5, 6, 0],
     name: null,
     desc: null,
+    eventType: null,
     start: null,
     end: null,
     selectedEvent: {},
