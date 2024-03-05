@@ -1,10 +1,22 @@
-# Тестовое задание: Meleton
+# Meleton test task
 
-- Стек: Nuxt v2 + Vuetify v2
+## Stack
+- [Nuxt.js v.2.x](https://nuxtjs.org)
+- [Vuetify v.2.x](https://vuetifyjs.com/)
 
-## Запустить проект локально
+## Build Setup
 
-```
-yarn install
-yarn dev
+```bash
+# install dependencies
+$ yarn install
+
+# serve with hot reload at localhost:5005
+$ yarn dev
+
+# build for production and launch server
+$ yarn build
+$ yarn start
+
+# generate static project
+$ yarn generate
 ```
