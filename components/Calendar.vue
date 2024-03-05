@@ -1,5 +1,5 @@
 <template>
-  <v-row class="fill-height">
+  <v-row class="fill-height pb-14">
     <v-col>
       <v-sheet height="64">
         <v-toolbar
@@ -147,7 +147,7 @@
       selectedElement: null,
       selectedOpen: false,
       events: [],
-      colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
+      colors: ['deep-purple lighten-3', 'deep-purple accent-2', 'deep-purple', 'cyan darken-4', 'cyan darken-1', 'amber', 'grey darken-1'],
       names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
     }),
     mounted () {
