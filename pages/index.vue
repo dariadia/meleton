@@ -2,7 +2,9 @@
   <v-row justify="center" align="center">
     <v-col cols="12" sm="8" md="10">
       <div class="text-h3 mb-4 text-center">Meleton: My Calendar</div>
-      <Alert />
+      <div>
+        <Alert v-for="item in hasDue" :key="item.id" :event="item" />
+      </div>
       <Calendar />
     </v-col>
   </v-row>
@@ -22,12 +24,12 @@ export default {
 
     const checkTime = (date) => {
       const HOUR = 1000 * 60 * 60
-      const anHourAhead = Date.now() - HOUR
-      return date < anHourAhead
+      const anHourAhead = Date.now() + HOUR
+      console.log(new Date(date) / 100, anHourAhead)
+      // Date.now() >= date >= anHourAhead
+      return new Date(date) / 100 <= anHourAhead
     }
-
-    console.log(_events.filter(event => checkTime(event.start)))
-
+    this.hasDue = _events.filter(event => checkTime(event.start))
   },
 }
 </script>
