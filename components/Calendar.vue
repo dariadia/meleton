@@ -141,6 +141,7 @@ export default {
   }),
   mounted() {
     this.$refs.calendar.checkChange()
+    this.getEvents()
   },
   methods: {
     viewDay({ date }) {
@@ -160,6 +161,7 @@ export default {
       this.$refs.calendar.next()
     },
     getEvents() {
+      let events = []
       // todo
       // get events from LocalStorage here
       this.events = events
@@ -188,15 +190,15 @@ export default {
     },
     addEvent() {
       // Some basic check-up. No special symbols in event names.
-      const isValueValid = (value) => /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(value)
-      const isNameValid = this.name && isValueValid(this.name)
+      const isValueInvalid = (value) => /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(value)
+      const isNameValid = this.name && !isValueInvalid(this.name)
 
       // Check that date and time are filled out
-      const isDateValid = (date) => date && date.time && date.date
+      const isDateInvalid = (date) => date || !date.time || !date.date
 
       // Other data just has to be there. We could add more checks if needed.
       const isValid = isNameValid && this.desc
-        && isDateValid(this.start) && isDateValid(this.end)
+        && isDateInvalid(this.start) && isDateInvalid(this.end)
         && this.eventType
 
       if (isValid) {
@@ -209,14 +211,15 @@ export default {
           this.eventType = '',
           this.start = '',
           this.end = ''
+        alert("Success! Event has been added.")
       } else {
         const message = 'Please check that you have filled out these fields:'
         let _message = []
-        if (!this.name) _message.push('event name')
+        if (!isNameValid) _message.push('event name')
         if (!this.desc) _message.push('event description')
         if (!this.eventType) _message.push('event event type')
-        if (!this.start) _message.push('event start date')
-        if (!this.end) _message.push('event end date')
+        if (isDateInvalid(this.start)) _message.push('event start date')
+        if (isDateInvalid(this.end)) _message.push('event end date')
         alert(`${message}\n${_message.join("\n")}`)
       }
     },
