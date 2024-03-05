@@ -133,6 +133,7 @@
 
 <script>
 export default {
+  props: ['checkIfHasDue'],
   data: () => ({
     localStorageKey: "calendarEvents",
     today: new Date().toISOString().substr(0, 10),
@@ -265,6 +266,8 @@ export default {
         this.popup = false
         this.popupDate = false
         this.getEvents()
+        console.log(this)
+        this._props.checkIfHasDue()
         alert("Success! Event has been added.")
       } else {
         const message = 'Please check that you have filled out these fields:'
