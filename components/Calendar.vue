@@ -46,36 +46,8 @@
           </v-menu>
         </v-toolbar>
       </v-sheet>
-      <v-dialog v-model="popup" max-width="500">
-        <v-card>
-          <v-container>
-            <v-form @submit.prevent="addEvent">
-              <v-text-field v-model="name" type="text" label="Event title (*)"></v-text-field>
-              <v-text-field v-model="desc" type="text" label="Event description (*)"></v-text-field>
-              <v-text-field v-model="start" type="date" label="Start (*)"></v-text-field>
-              <v-text-field v-model="end" type="date" label="End (*)"></v-text-field>
-              <v-btn type="submit" color="primary" class="mr-4" @click.stop="popup = false">
-                create event
-              </v-btn>
-            </v-form>
-          </v-container>
-        </v-card>
-      </v-dialog>
-      <v-dialog v-model="popupDate" max-width="500">
-        <v-card>
-          <v-container>
-            <v-form @submit.prevent="addEvent">
-              <v-text-field v-model="name" type="text" label="event name (required)"></v-text-field>
-              <v-text-field v-model="details" type="text" label="detail"></v-text-field>
-              <v-text-field v-model="start" type="date" label="start (required)"></v-text-field>
-              <v-text-field v-model="end" type="date" label="end (required)"></v-text-field>
-              <v-btn type="submit" color="primary" class="mr-4" @click.stop="popup = false">
-                create event
-              </v-btn>
-            </v-form>
-          </v-container>
-        </v-card>
-      </v-dialog>
+      <Popup :popup="popup" :addEvent="addEvent" :name="name"  end="end" start="start" :desc="desc" />
+      <DatePopup :popup="popupDate" :addEvent="addEvent" :name="name"  end="end" start="start" :desc="desc" />
       <v-sheet height="600">
         <v-calendar ref="calendar" v-model="focus" color="primary" :events="events" :event-color="getEventColor"
           :event-margin-bottom="3" :now="today" :type="type" @click:event="showEvent" @click:more="viewDay"
