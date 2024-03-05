@@ -28,7 +28,6 @@ export default {
   },
   methods: {
     checkIfHasDue() {
-      console.log(2222)
       const _data = localStorage.getItem(this.localStorageKey)
       if (!_data) return
       const _events = JSON.parse(_data)
