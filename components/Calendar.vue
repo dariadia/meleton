@@ -40,7 +40,7 @@
           </v-menu>
         </v-toolbar>
       </v-sheet>
-      <v-dialog v-model="popup" max-width="500">
+      <v-dialog @click:outside="closeDialog" v-model="popup" max-width="500">
         <v-card>
           <v-container>
             <v-form @submit.prevent="addEvent">
@@ -58,7 +58,7 @@
         </v-card>
       </v-dialog>
 
-      <v-dialog v-model="popupDate" max-width="500">
+      <v-dialog v-model="popupDate" @click:outside="closeDialog" max-width="500">
         <v-card>
           <v-container>
             <v-form @submit.prevent="addEvent">
@@ -96,12 +96,14 @@
               <div class="flex-grow-1"></div>
             </v-toolbar>
             <v-card-text>
-              <span v-if="currentlyEditing !== selectedEvent.id">{{ new Date(selectedEvent.start)?.toDateString() }}</span>
+              <span v-if="currentlyEditing !== selectedEvent.id">{{ new Date(selectedEvent.start)?.toDateString()
+                }}</span>
               <v-text-field v-else v-model="selectedEvent.start" type="datetime-local" label="Start (*)"></v-text-field>
               <span v-if="currentlyEditing !== selectedEvent.id"> – </span>
-              <span v-if="currentlyEditing !== selectedEvent.id">{{ new Date(selectedEvent.end)?.toDateString() }}</span>
+              <span v-if="currentlyEditing !== selectedEvent.id">{{ new Date(selectedEvent.end)?.toDateString()
+                }}</span>
               <v-text-field v-else v-model="selectedEvent.end" type="datetime-local" label="End (*)"></v-text-field>
-              <hr/>
+              <hr />
               <span v-if="currentlyEditing !== selectedEvent.id">{{ selectedEvent.eventType }}</span>
               <v-combobox v-else :items="names" v-model="selectedEvent.eventType" vuetifyjs="primary"
                 label="Choose event type (*)"></v-combobox>
@@ -181,6 +183,13 @@ export default {
     getEventColor(event) {
       return event.color
     },
+    closeDialog() {
+      this.name = '',
+        this.desc = '',
+        this.eventType = '',
+        this.start = '',
+        this.end = ''
+    },
     setToday() {
       this.focus = this.today
     },
@@ -230,7 +239,7 @@ export default {
           eventType: this.eventType,
           // simplification: each event type is paired with a colour
           // user-input-ed event types default to the first colour
-          color: this.getColor(this.eventType ),
+          color: this.getColor(this.eventType),
         })
         this.setToLocalStorage()
 
@@ -274,7 +283,7 @@ export default {
          preferrably: set each error as message below its corresponding field */
       if (!isValid) return alert('Please check how you filled out the event details')
 
-      this.events = this.events.map(_event => _event.id !== event.id ? _event : { ...event, color: this.getColor(event.eventType )})
+      this.events = this.events.map(_event => _event.id !== event.id ? _event : { ...event, color: this.getColor(event.eventType) })
       this.setToLocalStorage()
       this.selectedOpen = false
       this.currentlyEditing = null
