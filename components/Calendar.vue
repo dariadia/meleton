@@ -56,7 +56,7 @@
                 label="Choose event type (*)"></v-combobox>
               <v-text-field v-model="start" type="datetime-local" label="Start (*)"></v-text-field>
               <v-text-field v-model="end" type="datetime-local" label="End (*)"></v-text-field>
-              <v-btn type="submit" color="primary" class="mr-4" @click.stop="popup = false">
+              <v-btn type="submit" color="primary" class="mr-4">
                 create event
               </v-btn>
             </v-form>
@@ -67,11 +67,13 @@
         <v-card>
           <v-container>
             <v-form @submit.prevent="addEvent">
-              <v-text-field v-model="name" type="text" label="event name (required)"></v-text-field>
-              <v-text-field v-model="desc" type="text" label="Event description"></v-text-field>
-              <v-text-field v-model="start" type="date" label="start (required)"></v-text-field>
-              <v-text-field v-model="end" type="date" label="end (required)"></v-text-field>
-              <v-btn type="submit" color="primary" class="mr-4" @click.stop="popup = false">
+              <v-text-field v-model="name" type="text" label="Event title (*)"></v-text-field>
+              <v-text-field v-model="desc" type="text" label="Event description (*)"></v-text-field>
+              <v-combobox :items="names" v-model="eventType" vuetifyjs="primary"
+                label="Choose event type (*)"></v-combobox>
+              <v-text-field v-model="start" type="datetime-local" label="Start (*)"></v-text-field>
+              <v-text-field v-model="end" type="datetime-local" label="End (*)"></v-text-field>
+              <v-btn type="submit" color="primary" class="mr-4">
                 create event
               </v-btn>
             </v-form>
@@ -189,6 +191,7 @@ export default {
     setPopupDate({ date }) {
       this.popupDate = true
       this.focus = date
+      this.start = new Date(date).toISOString()
     },
     setToLocalStorage() {
       localStorage.setItem(this.localStorageKey, this.stringifyEvents())
@@ -210,11 +213,18 @@ export default {
       // Other data just has to be there. We could add more checks if needed.
       const isValid = isNameValid && this.desc
         && isDateValid(this.start) && isDateValid(this.end)
-        && this.eventType
+        && this.eventType && this.start < this.end
 
       if (isValid) {
         // simplification: use the timestamp when this event was created as its id
-        this.events.push({ id: Date.now(), name: this.name, desc: this.desc, start: this.start, end: this.end, eventType: this.eventType })
+        this.events.push({
+          id: Date.now(),
+          name: this.name,
+          desc: this.desc,
+          start: new Date(this.start).toISOString(),
+          end: new Date(this.end).toISOString(),
+          eventType: this.eventType
+        })
         this.setToLocalStorage()
 
         this.getEvents()
@@ -223,6 +233,8 @@ export default {
           this.eventType = '',
           this.start = '',
           this.end = ''
+          
+        this.popup = false
         alert("Success! Event has been added.")
       } else {
         const message = 'Please check that you have filled out these fields:'
