@@ -86,15 +86,6 @@
               <v-btn @click="deleteEvent(selectedEvent.id)" icon>
                 <v-icon>mdi-delete</v-icon>
               </v-btn>
-
-             
-              <!-- <v-text-field v-model="start" type="date" label="Start (*)"></v-text-field>
-              <v-text-field v-model="end" type="date" label="End (*)"></v-text-field> -->
-
-            
-
-       
-      
               <v-toolbar-title v-if="currentlyEditing !== selectedEvent.id">
                 {{ selectedEvent.name }}
               </v-toolbar-title>
@@ -105,6 +96,12 @@
               <div class="flex-grow-1"></div>
             </v-toolbar>
             <v-card-text>
+              <span v-if="currentlyEditing !== selectedEvent.id">{{ new Date(selectedEvent.start)?.toDateString() }}</span>
+              <v-text-field v-else v-model="selectedEvent.start" type="date" label="Start (*)"></v-text-field>
+              <span v-if="currentlyEditing !== selectedEvent.id"> – </span>
+              <span v-if="currentlyEditing !== selectedEvent.id">{{ new Date(selectedEvent.end)?.toDateString() }}</span>
+              <v-text-field v-else v-model="selectedEvent.end" type="date" label="End (*)"></v-text-field>
+              <hr/>
               <span v-if="currentlyEditing !== selectedEvent.id">{{ selectedEvent.eventType }}</span>
               <v-combobox v-else :items="names" v-model="selectedEvent.eventType" vuetifyjs="primary"
                 label="Choose event type (*)"></v-combobox>
