@@ -246,7 +246,6 @@ export default {
     editEvent (ev) {
       this.currentlyEditing = ev.id
     },
-    // !!!
     async updateEvent (ev) {
       // await db.collection('calEvent').doc(this.currentlyEditing).update({
       //   details: ev.details
