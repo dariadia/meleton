@@ -115,6 +115,8 @@
 <script>
 export default {
   data: () => ({
+    eventSeparator: "//",
+    localStorageKey: "calendarEvents",
     today: new Date().toISOString().substr(0, 10),
     focus: new Date().toISOString().substr(0, 10),
     type: 'month',
@@ -188,23 +190,33 @@ export default {
       this.popupDate = true
       this.focus = date
     },
+    setToLocalStorage() {
+      localStorage.setItem(this.localStorageKey, this.stringifyEvents())
+    },
+    stringifyEvents() {
+      return this.events.map(event => JSON.stringify(event)).join(this.eventSeparator)
+    },
     addEvent() {
       // Some basic check-up. No special symbols in event names.
-      const isValueInvalid = (value) => /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(value)
-      const isNameValid = this.name && !isValueInvalid(this.name)
+      const isValueValid = (value) => /[^ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(value)
+      const isNameValid = this.name && isValueValid(this.name)
 
       // Check that date and time are filled out
-      const isDateInvalid = (date) => date || !date.time || !date.date
+      // When not filled out e.g. this.date === function
+      // There should be a neater sollution, should check out more vuetifyjs docs
+      // If user enters, e.g., 80:99 => the vuetifyjs element itself converts it to valid time
+      const isDateValid = (date) => date && typeof date === 'string'
 
       // Other data just has to be there. We could add more checks if needed.
       const isValid = isNameValid && this.desc
-        && isDateInvalid(this.start) && isDateInvalid(this.end)
+        && isDateValid(this.start) && isDateValid(this.end)
         && this.eventType
 
       if (isValid) {
+        // simplification: use the timestamp when this event was created as its id
+        this.events.push({ id: Date.now(), name: this.name, desc: this.desc, start: this.start, end: this.end, eventType: this.eventType })
+        this.setToLocalStorage()
 
-        // todo
-        // write this event to LocalStorage here
         this.getEvents()
         this.name = '',
           this.desc = '',
@@ -218,17 +230,17 @@ export default {
         if (!isNameValid) _message.push('event name')
         if (!this.desc) _message.push('event description')
         if (!this.eventType) _message.push('event event type')
-        if (isDateInvalid(this.start)) _message.push('event start date')
-        if (isDateInvalid(this.end)) _message.push('event end date')
+        if (!isDateValid(this.start)) _message.push('event start date')
+        if (!isDateValid(this.end)) _message.push('event end date')
         alert(`${message}\n${_message.join("\n")}`)
       }
     },
     editEvent(event) {
       this.currentlyEditing = event.id
     },
-    async deleteEvent(ev) {
-      // todo
-      // write this to LocalStorage
+    async deleteEvent(event) {
+      this.events = this.events.filter(_event => _event.id !== event.id)
+      this.setToLocalStorage()
       this.selectedOpen = false,
         this.getEvents()
     },
