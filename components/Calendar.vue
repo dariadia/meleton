@@ -175,7 +175,9 @@ export default {
       this.popupDate = true
       this.focus = date
       const now = new Date()
-      this.start = `${date} ${now.getHours()}:${now.getMinutes()}`
+      let minutes = now.getMinutes()
+      if (minutes < 10) minutes = '0' + minutes
+      this.start = `${date} ${now.getHours()}:${minutes}`
     },
     viewDay({ date }) {
       this.focus = date
