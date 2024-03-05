@@ -163,28 +163,6 @@ export default {
   mounted() {
     this.getEvents()
   },
-  computed: {
-    title() {
-      const { start, end } = this
-      if (!start || !end) return ''
-      const startMonth = this.monthFormatter(start)
-      const startYear = start.year
-      const startDay = start.day + start.day
-      switch (this.type) {
-        case 'month':
-          return `${startMonth} ${startYear}`
-        case 'week':
-        case 'day':
-          return `${startMonth} ${startDay} ${startYear}`
-      }
-      return ''
-    },
-    monthFormatter() {
-      return this.$refs.calendar.getFormatter({
-        timeZone: 'UTC', month: 'long',
-      })
-    }
-  },
   methods: {
     getEvents() {
       const _data = localStorage.getItem(this.localStorageKey)
@@ -287,7 +265,8 @@ export default {
       this.currentlyEditing = event.id
     },
     getColor(eventType) {
-      return this.colors[this.names.indexOf(eventType) || 0]
+      const colorInx = this.names.indexOf(eventType)
+      return this.colors[colorInx >= 0 ? colorInx : 0]
     },
     updateEvent(event) {
       const { isValid } = this.validateFields({ name: event.name, desc: event.desc, start: event.start, end: event.end, eventType: event.eventType })
