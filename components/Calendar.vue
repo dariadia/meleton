@@ -36,20 +36,16 @@
               <v-list-item @click="type = 'month'">
                 <v-list-item-title>Month</v-list-item-title>
               </v-list-item>
-              <v-list-item @click="type = '4day'">
-                <v-list-item-title>4 days</v-list-item-title>
-              </v-list-item>
             </v-list>
           </v-menu>
         </v-toolbar>
       </v-sheet>
-
       <v-dialog v-model="popup" max-width="500">
         <v-card>
           <v-container>
             <v-form @submit.prevent="addEvent">
               <v-text-field v-model="name" type="text" label="Event title (*)"></v-text-field>
-              <v-text-field v-model="desc" type="text" label="Event description (*)"></v-text-field>
+              <v-text-field counter="300" v-model="desc" type="text" label="Event description (*)"></v-text-field>
               <v-combobox :items="names" v-model="eventType" vuetifyjs="primary"
                 label="Choose event type (*)"></v-combobox>
               <v-text-field v-model="start" type="date" label="Start (*)"></v-text-field>
@@ -67,7 +63,7 @@
           <v-container>
             <v-form @submit.prevent="addEvent">
               <v-text-field v-model="name" type="text" label="Event title (*)"></v-text-field>
-              <v-text-field v-model="desc" type="text" label="Event description (*)"></v-text-field>
+              <v-text-field counter="300" v-model="desc" type="text" label="Event description (*)"></v-text-field>
               <v-combobox :items="names" v-model="eventType" vuetifyjs="primary"
                 label="Choose event type (*)"></v-combobox>
               <v-text-field v-model="start" type="date" label="Start (*)"></v-text-field>
@@ -94,7 +90,8 @@
                 {{ selectedEvent.name }}
               </v-toolbar-title>
               <v-toolbar-title v-else>
-                <v-textarea class="pt-4" v-model="selectedEvent.name" type="text" rows="1" placeholder="Change event name"></v-textarea>
+                <v-textarea class="pt-4" v-model="selectedEvent.name" type="text" rows="1"
+                  placeholder="Change event name" background-color="grey lighten-2"></v-textarea>
               </v-toolbar-title>
               <div class="flex-grow-1"></div>
             </v-toolbar>
@@ -103,8 +100,7 @@
                 {{ selectedEvent.desc }}
               </form>
               <form v-else>
-                <v-textarea v-model="selectedEvent.desc" type="text" rows="3"
-                  placeholder="Change description">
+                <v-textarea v-model="selectedEvent.desc" type="text" rows="3" placeholder="Change description">
                 </v-textarea>
               </form>
             </v-card-text>
