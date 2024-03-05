@@ -266,13 +266,15 @@ export default {
         alert(`${message}\n${_message.join("\n")}\n\n${extraMessage}\n\n${extraTimeMessage}`)
       }
     },
-    editEvent(ev) {
-      this.currentlyEditing = ev.id
+    editEvent(event) {
+      this.currentlyEditing = event.id
     },
-    async updateEvent(ev) {
-      // todo
-      this.selectedOpen = false,
-        this.currentlyEditing = null
+    async updateEvent(event) {
+      this.events = this.events.map(_event => _event.id !== event.id ? _event : event)
+      this.setToLocalStorage()
+      this.selectedOpen = false
+      this.currentlyEditing = null
+      this.getEvents()
     },
     async deleteEvent(event) {
       this.events = this.events.filter(_event => _event.id !== event.id)
