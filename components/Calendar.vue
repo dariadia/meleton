@@ -48,8 +48,8 @@
               <v-text-field counter="300" v-model="desc" type="text" label="Notification text (*)"></v-text-field>
               <v-combobox :items="names" v-model="eventType" vuetifyjs="primary"
                 label="Choose event type (*)"></v-combobox>
-              <v-text-field v-model="start" type="date" label="Start (*)"></v-text-field>
-              <v-text-field v-model="end" type="date" label="End (*)"></v-text-field>
+              <v-text-field v-model="start" type="datetime-local" label="Start (*)"></v-text-field>
+              <v-text-field v-model="end" type="datetime-local" label="End (*)"></v-text-field>
               <v-btn type="submit" color="primary" class="mr-4">
                 create event
               </v-btn>
@@ -66,8 +66,8 @@
               <v-text-field counter="300" v-model="desc" type="text" label="Notification text (*)"></v-text-field>
               <v-combobox :items="names" v-model="eventType" vuetifyjs="primary"
                 label="Choose event type (*)"></v-combobox>
-              <v-text-field v-model="start" type="date" label="Start (*)"></v-text-field>
-              <v-text-field v-model="end" type="date" label="End (*)"></v-text-field>
+              <v-text-field v-model="start" type="datetime-local" label="Start (*)"></v-text-field>
+              <v-text-field v-model="end" type="datetime-local" label="End (*)"></v-text-field>
               <v-btn type="submit" color="primary" class="mr-4">
                 create event
               </v-btn>
@@ -97,10 +97,10 @@
             </v-toolbar>
             <v-card-text>
               <span v-if="currentlyEditing !== selectedEvent.id">{{ new Date(selectedEvent.start)?.toDateString() }}</span>
-              <v-text-field v-else v-model="selectedEvent.start" type="date" label="Start (*)"></v-text-field>
+              <v-text-field v-else v-model="selectedEvent.start" type="datetime-local" label="Start (*)"></v-text-field>
               <span v-if="currentlyEditing !== selectedEvent.id"> – </span>
               <span v-if="currentlyEditing !== selectedEvent.id">{{ new Date(selectedEvent.end)?.toDateString() }}</span>
-              <v-text-field v-else v-model="selectedEvent.end" type="date" label="End (*)"></v-text-field>
+              <v-text-field v-else v-model="selectedEvent.end" type="datetime-local" label="End (*)"></v-text-field>
               <hr/>
               <span v-if="currentlyEditing !== selectedEvent.id">{{ selectedEvent.eventType }}</span>
               <v-combobox v-else :items="names" v-model="selectedEvent.eventType" vuetifyjs="primary"
@@ -237,6 +237,8 @@ export default {
     },
     addEvent() {
       const { isNameValid, isDateValid, isValid } = this.validateFields({ name: this.name, desc: this.desc, start: this.start, end: this.end, eventType: this.eventType })
+      const _start = this.start.split("T")
+      const _end = this.end.split("T")
 
       if (isValid) {
         // simplification: use the timestamp when this event was created as its id
@@ -244,10 +246,10 @@ export default {
           id: Date.now(),
           name: this.name,
           desc: this.desc,
-          start: this.start,
-          end: this.end,
+          // simplification: caused by https://github.com/dariadia/meleton/pull/2#issuecomment-1979142190
+          start: `${_start[0]} ${_start[1]}`,
+          end: `${_end[0]} ${_end[1]}`,
           eventType: this.eventType,
-          timed: false,
           // simplification: each event type is paired with a colour
           // user-input-ed event types default to the first colour
           color: this.getColor(this.eventType ),
