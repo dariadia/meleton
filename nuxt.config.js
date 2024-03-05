@@ -29,7 +29,7 @@ export default {
         light: {
           primary: colors.deepPurple.accent2,
           accent: colors.grey.darken4,
-          secondary: colors.deepPurple.lighten2,
+          secondary: colors.deepPurple.accent2,
           info: colors.teal.lighten1,
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
