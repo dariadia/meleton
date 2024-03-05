@@ -207,12 +207,16 @@ export default {
     setToLocalStorage() {
       localStorage.setItem(this.localStorageKey, JSON.stringify(this.events))
     },
-    addEvent() {
+    validateFields({ name, desc }) {
       // Some basic check-up. No special symbols in event names.
       const isValueValid = (value) => /[^ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(value)
-      const isNameValid = this.name && isValueValid(this.name)
+      const isNameValid = name?.trim() && isValueValid(name)
 
-      const isDescValid = this.desc && this.desc.length <= 300
+      const isDescValid = desc && desc.length <= 300
+      return { isNameValid, isDescValid }
+    },
+    addEvent() {
+      const { isNameValid, isDescValid } = this.validateFields({ name: this.name, desc: this.desc })
 
       // Check that date and time are filled out
       // When not filled out e.g. this.date === function
@@ -270,6 +274,10 @@ export default {
       this.currentlyEditing = event.id
     },
     async updateEvent(event) {
+      const { isNameValid, isDescValid } = this.validateFields({ name: event.name, desc: event.desc })
+      // simplification
+      if (!isNameValid || !isDescValid) return alert(`Please check how you filled out: ${isNameValid ? '' : 'event name'}${isDescValid ? '' : ', event notification text'}`)
+
       this.events = this.events.map(_event => _event.id !== event.id ? _event : event)
       this.setToLocalStorage()
       this.selectedOpen = false
