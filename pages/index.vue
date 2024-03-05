@@ -10,6 +10,24 @@
 
 <script>
 export default {
-  name: 'IndexPage'
+  name: 'IndexPage',
+  data: () => ({
+    localStorageKey: "calendarEvents",
+    hasDue: [],
+  }),
+  mounted() {
+    const _data = localStorage.getItem(this.localStorageKey)
+    if (!_data) return
+    const _events = JSON.parse(_data)
+
+    const checkTime = (date) => {
+      const HOUR = 1000 * 60 * 60
+      const anHourAhead = Date.now() - HOUR
+      return date < anHourAhead
+    }
+
+    console.log(_events.filter(event => checkTime(event.start)))
+
+  },
 }
 </script>
