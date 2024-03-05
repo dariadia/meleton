@@ -66,7 +66,7 @@
           <v-container>
             <v-form @submit.prevent="addEvent">
               <v-text-field v-model="name" type="text" label="event name (required)"></v-text-field>
-              <v-text-field v-model="details" type="text" label="detail"></v-text-field>
+              <v-text-field v-model="desc" type="text" label="Event description"></v-text-field>
               <v-text-field v-model="start" type="date" label="start (required)"></v-text-field>
               <v-text-field v-model="end" type="date" label="end (required)"></v-text-field>
               <v-btn type="submit" color="primary" class="mr-4" @click.stop="popup = false">
@@ -113,7 +113,8 @@
 <script>
 export default {
   data: () => ({
-    focus: '',
+    today: new Date().toISOString().substr(0, 10),
+    focus: new Date().toISOString().substr(0, 10),
     type: 'month',
     typeToLabel: {
       month: 'Month',
@@ -121,7 +122,12 @@ export default {
       day: 'Day',
     },
     weekday: [1, 2, 3, 4, 5, 6, 0],
+    name: null,
+    desc: null,
+    start: null,
+    end: null,
     selectedEvent: {},
+    currentlyEditing: null,
     selectedElement: null,
     selectedOpen: false,
     events: [],
