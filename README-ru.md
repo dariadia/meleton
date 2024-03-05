@@ -9,14 +9,14 @@
 
 ```bash
 # установить зависимости
-$ yarn install
+$ npm install
 
 # запустить в дев-режиме с hot reload localhost:5005
-$ yarn dev
+$ npm run dev
 
 # собрать для прода и запустить сервер
-$ yarn build
-$ yarn start
+$ npm build
+$ npm start
 
 ```
 
