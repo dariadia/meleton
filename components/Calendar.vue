@@ -86,6 +86,15 @@
               <v-btn @click="deleteEvent(selectedEvent.id)" icon>
                 <v-icon>mdi-delete</v-icon>
               </v-btn>
+
+             
+              <!-- <v-text-field v-model="start" type="date" label="Start (*)"></v-text-field>
+              <v-text-field v-model="end" type="date" label="End (*)"></v-text-field> -->
+
+            
+
+       
+      
               <v-toolbar-title v-if="currentlyEditing !== selectedEvent.id">
                 {{ selectedEvent.name }}
               </v-toolbar-title>
@@ -96,6 +105,9 @@
               <div class="flex-grow-1"></div>
             </v-toolbar>
             <v-card-text>
+              <span v-if="currentlyEditing !== selectedEvent.id">{{ selectedEvent.eventType }}</span>
+              <v-combobox v-else :items="names" v-model="selectedEvent.eventType" vuetifyjs="primary"
+                label="Choose event type (*)"></v-combobox>
               <form v-if="currentlyEditing !== selectedEvent.id">
                 {{ selectedEvent.desc }}
               </form>
@@ -104,7 +116,6 @@
                 </v-textarea>
               </form>
             </v-card-text>
-
             <v-card-actions>
               <v-btn text color="secondary" @click="selectedOpen = false">
                 close
@@ -207,26 +218,28 @@ export default {
     setToLocalStorage() {
       localStorage.setItem(this.localStorageKey, JSON.stringify(this.events))
     },
-    validateFields({ name, desc }) {
+    validateFields({ name, desc, start, end, eventType }) {
       // Some basic check-up. No special symbols in event names.
       const isValueValid = (value) => /[^ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(value)
       const isNameValid = name?.trim() && isValueValid(name)
 
       const isDescValid = desc && desc.length <= 300
-      return { isNameValid, isDescValid }
-    },
-    addEvent() {
-      const { isNameValid, isDescValid } = this.validateFields({ name: this.name, desc: this.desc })
 
-      // Check that date and time are filled out
-      // When not filled out e.g. this.date === function
-      // There should be a neater sollution, should check out more vuetifyjs docs
-      // If user enters, e.g., 80:99 => the vuetifyjs element itself converts it to valid time
+      /* Check that date and time are filled out
+         When not filled out e.g. this.date === function
+         There should be a neater sollution, should check out more vuetifyjs docs
+         If user enters, e.g., 80:99 => the vuetifyjs element itself converts it to valid time 
+      */
       const isDateValid = (date) => date && typeof date === 'string'
       // Other data just has to be there. We could add more checks if needed.
       const isValid = isNameValid && isDescValid
-        && isDateValid(this.start) && isDateValid(this.end)
-        && this.eventType && this.start < this.end
+        && isDateValid(start) && isDateValid(end)
+        && eventType && start < end
+
+      return { isNameValid, isDescValid, isDateValid, isValid }
+    },
+    addEvent() {
+      const { isNameValid, isDateValid, isValid } = this.validateFields({ name: this.name, desc: this.desc, start: this.start, end: this.end, eventType: this.eventType })
 
       if (isValid) {
         // simplification: use the timestamp when this event was created as its id
@@ -240,7 +253,7 @@ export default {
           timed: false,
           // simplification: each event type is paired with a colour
           // user-input-ed event types default to the first colour
-          color: this.colors[this.names.indexOf(this.eventType) || 0],
+          color: this.getColor(this.eventType ),
         })
         this.setToLocalStorage()
 
@@ -273,18 +286,22 @@ export default {
     editEvent(event) {
       this.currentlyEditing = event.id
     },
-    async updateEvent(event) {
-      const { isNameValid, isDescValid } = this.validateFields({ name: event.name, desc: event.desc })
-      // simplification
-      if (!isNameValid || !isDescValid) return alert(`Please check how you filled out: ${isNameValid ? '' : 'event name'}${isDescValid ? '' : ', event notification text'}`)
+    getColor(eventType) {
+      return this.colors[this.names.indexOf(eventType) || 0]
+    },
+    updateEvent(event) {
+      const { isValid } = this.validateFields({ name: event.name, desc: event.desc, start: event.start, end: event.end, eventType: event.eventType })
+      /* simplification: same as in the "addEvent" method
+         preferrably: set each error as message below its corresponding field */
+      if (!isValid) return alert('Please check how you filled out the event details')
 
-      this.events = this.events.map(_event => _event.id !== event.id ? _event : event)
+      this.events = this.events.map(_event => _event.id !== event.id ? _event : { ...event, color: this.getColor(event.eventType )})
       this.setToLocalStorage()
       this.selectedOpen = false
       this.currentlyEditing = null
       this.getEvents()
     },
-    async deleteEvent(event) {
+    deleteEvent(event) {
       this.events = this.events.filter(_event => _event.id !== event.id)
       this.setToLocalStorage()
       this.selectedOpen = false
