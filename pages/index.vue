@@ -24,10 +24,9 @@ export default {
 
     const checkTime = (date) => {
       const HOUR = 1000 * 60 * 60
-      const anHourAhead = Date.now() + HOUR
-      console.log(new Date(date) / 100, anHourAhead)
-      // Date.now() >= date >= anHourAhead
-      return new Date(date) / 100 <= anHourAhead
+      const _date = new Date(date)
+      const isFuture = Date.now() - _date <= 0
+      return isFuture ? _date - HOUR <= Date.now() : _date + HOUR <= Date.now()
     }
     this.hasDue = _events.filter(event => checkTime(event.start))
   },
