@@ -86,22 +86,26 @@
           @click:date="setPopupDate" @change="updateRange"></v-calendar>
         <v-menu v-model="selectedOpen" :close-on-content-click="false" :activator="selectedElement" full-width offset-x>
           <v-card color="grey lighten-4" :width="350" flat>
-            <v-toolbar :color="selectedEvent.color" dark>
+            <v-toolbar :color="selectedEvent.color">
               <v-btn @click="deleteEvent(selectedEvent.id)" icon>
                 <v-icon>mdi-delete</v-icon>
               </v-btn>
-              <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
+              <v-toolbar-title v-if="currentlyEditing !== selectedEvent.id">
+                {{ selectedEvent.name }}
+              </v-toolbar-title>
+              <v-toolbar-title v-else>
+                <v-textarea class="pt-4" v-model="selectedEvent.name" type="text" rows="1" placeholder="Change event name"></v-textarea>
+              </v-toolbar-title>
               <div class="flex-grow-1"></div>
             </v-toolbar>
-
             <v-card-text>
               <form v-if="currentlyEditing !== selectedEvent.id">
                 {{ selectedEvent.desc }}
               </form>
               <form v-else>
-                <textarea-autosize v-model="selectedEvent.desc" type="text" style="width: 100%" :min-height="100"
-                  placeholder="add note">
-                </textarea-autosize>
+                <v-textarea v-model="selectedEvent.desc" type="text" rows="3"
+                  placeholder="Change description">
+                </v-textarea>
               </form>
             </v-card-text>
 
