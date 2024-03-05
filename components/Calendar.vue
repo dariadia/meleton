@@ -302,7 +302,7 @@ export default {
       this.getEvents()
     },
     deleteEvent(event) {
-      this.events = this.events.filter(_event => _event.id !== event.id)
+      this.events = this.events.filter(_event => _event.id !== event)
       this.setToLocalStorage()
       this.selectedOpen = false
       this.getEvents()
