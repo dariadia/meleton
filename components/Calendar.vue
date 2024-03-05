@@ -67,6 +67,7 @@
         <v-card>
           <v-container>
             <v-form @submit.prevent="addEvent">
+              {{ start }}
               <v-text-field v-model="name" type="text" label="Event title (*)"></v-text-field>
               <v-text-field v-model="desc" type="text" label="Event description (*)"></v-text-field>
               <v-combobox :items="names" v-model="eventType" vuetifyjs="primary"
@@ -164,12 +165,46 @@ export default {
     next() {
       this.$refs.calendar.next()
     },
-    getEvents() {
-      let events = []
-      // todo
-      // get events from LocalStorage here
-      this.events = events
-    },
+    getEventColor (event) {
+        return event.color
+      },
+      rnd (a, b) {
+        return Math.floor((b - a + 1) * Math.random()) + a
+      },
+    getEvents ({ start, end }) {
+        const events = []
+
+        const min = new Date(`${start.date}T00:00:00`)
+        const max = new Date(`${end.date}T23:59:59`)
+        const days = (max.getTime() - min.getTime()) / 86400000
+        const eventCount = this.rnd(days, days + 20)
+
+        for (let i = 0; i < eventCount; i++) {
+          const allDay = this.rnd(0, 3) === 0
+          const firstTimestamp = this.rnd(min.getTime(), max.getTime())
+          const first = new Date(firstTimestamp - (firstTimestamp % 900000))
+          const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000
+          const second = new Date(first.getTime() + secondTimestamp)
+
+          events.push({
+            name: this.names[this.rnd(0, this.names.length - 1)],
+            start: first,
+            end: second,
+            color: this.colors[this.rnd(0, this.colors.length - 1)],
+            timed: !allDay,
+          })
+        }
+
+        this.events = events
+      },
+    // getEvents() {
+    //   let events = []
+    //   const _data = localStorage.getItem(this.localStorageKey)
+    //   if (!_data) return
+    //   events = [JSON.parse(_data)]
+    //   this.events = events
+    //   console.log(9, this.events)
+    // },
     showEvent({ nativeEvent, event }) {
       const open = () => {
         this.selectedEvent = event
@@ -191,7 +226,12 @@ export default {
     setPopupDate({ date }) {
       this.popupDate = true
       this.focus = date
-      this.start = new Date(date).toISOString()
+
+      // User already clicks on a date, so use it as a prefilled field
+      // Set time to the current time
+      const now = new Date()
+      const minutes = now.getMinutes()
+      this.start = `${date}T:${now.getHours()}:${minutes >= 10 ? minutes : `0${minutes}`}`
     },
     setToLocalStorage() {
       localStorage.setItem(this.localStorageKey, this.stringifyEvents())
@@ -204,14 +244,15 @@ export default {
       const isValueValid = (value) => /[^ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(value)
       const isNameValid = this.name && isValueValid(this.name)
 
+      const isDescValid = this.desc && this.desc.length <= 300
+
       // Check that date and time are filled out
       // When not filled out e.g. this.date === function
       // There should be a neater sollution, should check out more vuetifyjs docs
       // If user enters, e.g., 80:99 => the vuetifyjs element itself converts it to valid time
       const isDateValid = (date) => date && typeof date === 'string'
-
       // Other data just has to be there. We could add more checks if needed.
-      const isValid = isNameValid && this.desc
+      const isValid = isNameValid && isDescValid
         && isDateValid(this.start) && isDateValid(this.end)
         && this.eventType && this.start < this.end
 
@@ -221,13 +262,11 @@ export default {
           id: Date.now(),
           name: this.name,
           desc: this.desc,
-          start: new Date(this.start).toISOString(),
-          end: new Date(this.end).toISOString(),
+          start: this.start,
+          end: this.end,
           eventType: this.eventType
         })
         this.setToLocalStorage()
-
-        this.getEvents()
         this.name = '',
           this.desc = '',
           this.eventType = '',
@@ -235,6 +274,7 @@ export default {
           this.end = ''
 
         this.popup = false
+        this.popupDate = false
         alert("Success! Event has been added.")
       } else {
         const message = 'Please check that you have filled out these fields:'
@@ -244,7 +284,12 @@ export default {
         if (!this.eventType) _message.push('event event type')
         if (!isDateValid(this.start)) _message.push('event start date')
         if (!isDateValid(this.end)) _message.push('event end date')
-        alert(`${message}\n${_message.join("\n")}`)
+        const extraMessage = this.desc?.length > 300 ? "Event description must be shorter!": ''
+        const extraTimeMessage = this.start < this.end ? "Your end should end after it starts!": ''
+
+        // simplification: just alert all the errors together
+        // preferrably: set each error as message below its corresponding field
+        alert(`${message}\n${_message.join("\n")}\n\n${extraMessage}\n\n${extraTimeMessage}`)
       }
     },
     editEvent(event) {
