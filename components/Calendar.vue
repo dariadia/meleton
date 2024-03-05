@@ -54,8 +54,8 @@
               <v-text-field v-model="desc" type="text" label="Event description (*)"></v-text-field>
               <v-combobox :items="names" v-model="eventType" vuetifyjs="primary"
                 label="Choose event type (*)"></v-combobox>
-              <v-text-field v-model="start" type="date" label="Start (*)"></v-text-field>
-              <v-text-field v-model="end" type="date" label="End (*)"></v-text-field>
+              <v-text-field v-model="start" type="datetime-local" label="Start (*)"></v-text-field>
+              <v-text-field v-model="end" type="datetime-local" label="End (*)"></v-text-field>
               <v-btn type="submit" color="primary" class="mr-4" @click.stop="popup = false">
                 create event
               </v-btn>
@@ -137,7 +137,7 @@ export default {
     popup: false,
     popupDate: false,
     colors: ['deep-purple lighten-3', 'red lighten-3', 'cyan darken-4', 'cyan darken-1', 'amber', 'grey darken-1'],
-    names: ['Meeting', 'Holiday', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
+    names: ['Meeting', 'Holiday', 'Travel', 'Personal event', 'Birthday', 'Conference', 'Party'],
   }),
   mounted() {
     this.$refs.calendar.checkChange()
@@ -187,19 +187,37 @@ export default {
       this.focus = date
     },
     addEvent() {
-      if (this.name && this.start && this.end) {
+      // Some basic check-up. No special symbols in event names.
+      const isValueValid = (value) => /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(value)
+      const isNameValid = this.name && isValueValid(this.name)
+
+      // Check that date and time are filled out
+      const isDateValid = (date) => date && date.time && date.date
+
+      // Other data just has to be there. We could add more checks if needed.
+      const isValid = isNameValid && this.desc
+        && isDateValid(this.start) && isDateValid(this.end)
+        && this.eventType
+
+      if (isValid) {
+
         // todo
         // write this event to LocalStorage here
         this.getEvents()
         this.name = '',
           this.desc = '',
+          this.eventType = '',
           this.start = '',
-          this.end = '',
-          this.color = ''
+          this.end = ''
       } else {
-        alert('Please enter the correct data')
-        // todo
-        // add switch checking for what's missing
+        const message = 'Please check that you have filled out these fields:'
+        let _message = []
+        if (!this.name) _message.push('event name')
+        if (!this.desc) _message.push('event description')
+        if (!this.eventType) _message.push('event event type')
+        if (!this.start) _message.push('event start date')
+        if (!this.end) _message.push('event end date')
+        alert(`${message}\n${_message.join("\n")}`)
       }
     },
     editEvent(event) {
