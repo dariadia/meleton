@@ -103,9 +103,14 @@ export default {
           to: '/'
         },
         {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire'
+          icon: 'mdi-calendar',
+          title: 'Week View',
+          to: '/week'
+        },
+        {
+          icon: 'mdi-calendar-multiple',
+          title: 'Month View',
+          to: '/month'
         }
       ],
       miniVariant: false,
