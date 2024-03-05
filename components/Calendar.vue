@@ -167,7 +167,6 @@ export default {
     title() {
       const { start, end } = this
       if (!start || !end) return ''
-      console.log(this.type)
       const startMonth = this.monthFormatter(start)
       const startYear = start.year
       const startDay = start.day + start.day

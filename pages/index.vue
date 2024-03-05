@@ -16,16 +16,22 @@ export default {
   data: () => ({
     localStorageKey: "calendarEvents",
     hasDue: [],
+    interval: null,
   }),
   mounted() {
+    const MINUTE = 60 * 1000
     this.checkIfHasDue()
+    this.interval = setInterval(() => this.checkIfHasDue(), MINUTE)
+  },
+  onBeforeUnmount() {
+    clearInterval(this.interval)
   },
   methods: {
     checkIfHasDue() {
+      console.log(2222)
       const _data = localStorage.getItem(this.localStorageKey)
       if (!_data) return
       const _events = JSON.parse(_data)
-
       const checkTime = (date) => {
         const HOUR = 1000 * 60 * 60
         const _date = new Date(date)
