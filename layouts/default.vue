@@ -83,7 +83,7 @@
       :absolute="!fixed"
       app
     >
-      <span>&copy; {{ new Date().getFullYear() }}</span>
+      <span>&copy; {{ new Date().getFullYear() }} ft. <NuxtLink to="https://github.com/dariadia/" target="_blank" rel="noopener">@dariadia</NuxtLink></span>
     </v-footer>
   </v-app>
 </template>
@@ -98,19 +98,9 @@ export default {
       fixed: false,
       items: [
         {
-          icon: 'mdi-apps',
-          title: 'Welcome',
-          to: '/'
-        },
-        {
           icon: 'mdi-calendar',
-          title: 'Week View',
-          to: '/week'
-        },
-        {
-          icon: 'mdi-calendar-multiple',
-          title: 'Month View',
-          to: '/month'
+          title: 'My Calendar',
+          to: '/'
         }
       ],
       miniVariant: false,
