@@ -46,10 +46,40 @@
           </v-menu>
         </v-toolbar>
       </v-sheet>
+      <v-dialog v-model="popup" max-width="500">
+        <v-card>
+          <v-container>
+            <v-form @submit.prevent="addEvent">
+              <v-text-field v-model="name" type="text" label="Event title (*)"></v-text-field>
+              <v-text-field v-model="desc" type="text" label="Event description (*)"></v-text-field>
+              <v-text-field v-model="start" type="date" label="Start (*)"></v-text-field>
+              <v-text-field v-model="end" type="date" label="End (*)"></v-text-field>
+              <v-btn type="submit" color="primary" class="mr-4" @click.stop="popup = false">
+                create event
+              </v-btn>
+            </v-form>
+          </v-container>
+        </v-card>
+      </v-dialog>
+      <v-dialog v-model="popupDate" max-width="500">
+        <v-card>
+          <v-container>
+            <v-form @submit.prevent="addEvent">
+              <v-text-field v-model="name" type="text" label="event name (required)"></v-text-field>
+              <v-text-field v-model="details" type="text" label="detail"></v-text-field>
+              <v-text-field v-model="start" type="date" label="start (required)"></v-text-field>
+              <v-text-field v-model="end" type="date" label="end (required)"></v-text-field>
+              <v-btn type="submit" color="primary" class="mr-4" @click.stop="popup = false">
+                create event
+              </v-btn>
+            </v-form>
+          </v-container>
+        </v-card>
+      </v-dialog>
       <v-sheet height="600">
-        <v-calendar ref="calendar" v-model="focus" color="primary" :weekdays="weekday" :events="events"
-          :event-color="getEventColor" :type="type" @click:event="showEvent" @click:more="viewDay" @click:date="viewDay"
-          @change="updateRange"></v-calendar>
+        <v-calendar ref="calendar" v-model="focus" color="primary" :events="events" :event-color="getEventColor"
+          :event-margin-bottom="3" :now="today" :type="type" @click:event="showEvent" @click:more="viewDay"
+          @click:date="setPopupDate" @change="updateRange"></v-calendar>
         <v-menu v-model="selectedOpen" :close-on-content-click="false" :activator="selectedElement" offset-x>
           <v-card color="grey lighten-4" min-width="350px" flat>
             <v-toolbar :color="selectedEvent.color" dark>
@@ -140,59 +170,37 @@ export default {
       nativeEvent.stopPropagation()
     },
     updateRange({ start, end }) {
-      const events = []
-
-      // const min = new Date(`${start.date}T00:00:00`)
-      // const max = new Date(`${end.date}T23:59:59`)
-      // const days = (max.getTime() - min.getTime()) / 86400000
-      // const eventCount = this.rnd(days, days + 20)
-
-      // for (let i = 0; i < eventCount; i++) {
-      //   const allDay = this.rnd(0, 3) === 0
-      //   const firstTimestamp = this.rnd(min.getTime(), max.getTime())
-      //   const first = new Date(firstTimestamp - (firstTimestamp % 900000))
-      //   const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000
-      //   const second = new Date(first.getTime() + secondTimestamp)
-
-      //   events.push({
-      //     name: this.names[this.rnd(0, this.names.length - 1)],
-      //     start: first,
-      //     end: second,
-      //     color: this.colors[this.rnd(0, this.colors.length - 1)],
-      //     timed: !allDay,
-      //   })
-      // }
-
-      this.events = events
+      this.start = start
+      this.end = end
     },
-    setPopupDate( { date }) {
+    setPopupDate({ date }) {
       this.popupDate = true
       this.focus = date
     },
-    addEvent () {
+    addEvent() {
       if (this.name && this.start && this.end) {
         // todo
         // write this event to LocalStorage here
         this.getEvents()
         this.name = '',
-        this.desc = '',
-        this.start = '',
-        this.end = '',
-        this.color = ''
+          this.desc = '',
+          this.start = '',
+          this.end = '',
+          this.color = ''
       } else {
         alert('Please enter the correct data')
         // todo
         // add switch checking for what's missing
       }
     },
-    editEvent (event) {
+    editEvent(event) {
       this.currentlyEditing = event.id
     },
-    async deleteEvent (ev) {
+    async deleteEvent(ev) {
       // todo
       // write this to LocalStorage
       this.selectedOpen = false,
-      this.getEvents()
+        this.getEvents()
     },
   },
 }
