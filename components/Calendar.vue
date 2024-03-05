@@ -3,7 +3,7 @@
     <v-col>
       <v-sheet height="64">
         <v-toolbar flat>
-          <v-btn color="primary" @click.stop="dialog = true" class="mr-4">
+          <v-btn color="primary" @click.stop="popup = true" class="mr-4">
             New Event
           </v-btn>
           <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
@@ -66,7 +66,7 @@
               </v-btn>
             </v-toolbar>
             <v-card-text>
-              <span v-html="selectedEvent.details"></span>
+              <span v-html="selectedEvent.desc"></span>
             </v-card-text>
             <v-card-actions>
               <v-btn text color="secondary" @click="selectedOpen = false">
@@ -95,6 +95,8 @@ export default {
     selectedElement: null,
     selectedOpen: false,
     events: [],
+    popup: false,
+    popupDate: false,
     colors: ['deep-purple lighten-3', 'red lighten-3', 'cyan darken-4', 'cyan darken-1', 'amber', 'grey darken-1'],
     names: ['Meeting', 'Holiday', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
   }),
@@ -117,6 +119,11 @@ export default {
     },
     next() {
       this.$refs.calendar.next()
+    },
+    getEvents() {
+      // todo
+      // get events from LocalStorage here
+      this.events = events
     },
     showEvent({ nativeEvent, event }) {
       const open = () => {
@@ -157,6 +164,35 @@ export default {
       // }
 
       this.events = events
+    },
+    setPopupDate( { date }) {
+      this.popupDate = true
+      this.focus = date
+    },
+    addEvent () {
+      if (this.name && this.start && this.end) {
+        // todo
+        // write this event to LocalStorage here
+        this.getEvents()
+        this.name = '',
+        this.desc = '',
+        this.start = '',
+        this.end = '',
+        this.color = ''
+      } else {
+        alert('Please enter the correct data')
+        // todo
+        // add switch checking for what's missing
+      }
+    },
+    editEvent (event) {
+      this.currentlyEditing = event.id
+    },
+    async deleteEvent (ev) {
+      // todo
+      // write this to LocalStorage
+      this.selectedOpen = false,
+      this.getEvents()
     },
   },
 }
