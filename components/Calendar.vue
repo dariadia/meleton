@@ -74,7 +74,7 @@
               <v-divider></v-divider>
               <v-container v-if="currentlyEditing !== selectedEvent.id">{{ selectedEvent.eventType }}</v-container>
               <v-combobox v-else :items="names" v-model="selectedEvent.eventType" vuetifyjs="primary"
-                label="Choose event type (*)"  @blur="getEventType"></v-combobox>
+                label="Choose event type (*)" @blur="getEventType"></v-combobox>
               <form v-if="currentlyEditing !== selectedEvent.id">
                 {{ selectedEvent.desc }}
               </form>
@@ -268,7 +268,9 @@ export default {
         const extraTimeMessage = new Date(start) > new Date(end) ? "Your event should end after it starts!" : ''
 
         /* simplification: just alert all the errors together
-        preferrably: set each error as message below its corresponding field */
+          preferrably: set each error as message below its corresponding field,
+          noteably add checks via passing :rules="rules" to the v-components
+        */
         alert(`${message}\n${_message.join("\n")}\n\n${extraMessage}\n\n${extraTimeMessage}`)
       }
     },
@@ -285,8 +287,10 @@ export default {
       const _color = this.getColor(event.eventType)
       const { isValid } = this.validateFields({ name: event.name, desc: event.desc, start: _start, end: _end, eventType: event.eventType })
 
-      /* simplification: same as in the "addEvent" method
-         preferrably: set each error as message below its corresponding field */
+      /* simplification: just alert all the errors together
+        preferrably: set each error as message below its corresponding field,
+        noteably add checks via passing :rules="rules" to the v-components
+      */
       if (!isValid) return alert('Please check how you filled out the event details')
 
       this.events = this.events.map(_event => _event.id !== event.id ? _event : { ...event, start: _start, end: _end, color: _color })
