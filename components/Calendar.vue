@@ -275,12 +275,15 @@ export default {
       return this.colors[colorInx >= 0 ? colorInx : 0]
     },
     updateEvent(event) {
-      const { isValid } = this.validateFields({ name: event.name, desc: event.desc, start: event.start, end: event.end, eventType: event.eventType })
+      const _start = this.parseDate(event.start)
+      const _end = this.parseDate(event.end)
+      const { isValid } = this.validateFields({ name: event.name, desc: event.desc, start: _start, end: _end, eventType: event.eventType })
+
       /* simplification: same as in the "addEvent" method
          preferrably: set each error as message below its corresponding field */
       if (!isValid) return alert('Please check how you filled out the event details')
 
-      this.events = this.events.map(_event => _event.id !== event.id ? _event : { ...event, color: this.getColor(event.eventType) })
+      this.events = this.events.map(_event => _event.id !== event.id ? _event : { ...event, start: _start, end: _end, color: this.getColor(event.eventType) })
       this.setToLocalStorage()
       this.selectedOpen = false
       this.currentlyEditing = null
