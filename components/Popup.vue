@@ -70,6 +70,7 @@ export default {
     */
     getTime(event) {
       this.event.start = event.replace("T", " ")
+      console.log(this.defaultStart, this.event.start, this.eventStart)
     }
   }
 }
