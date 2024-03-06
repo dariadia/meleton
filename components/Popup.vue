@@ -13,7 +13,8 @@
           <v-text-field @change="getTime" :rules="rules.basic" v-model="eventStart" min="1970-00-00T00:00"
             max="2100-01-01T00:00" type="datetime-local" label="Start (*)"></v-text-field>
           <v-text-field v-model="event.end" min="1970-00-00T00:00" max="2100-01-01T00:00" type="datetime-local"
-            :rules="rules.basic" label="End (*)"></v-text-field>
+            :rules="rules.basic" :class="{ 'error--text': isStartEndErr }" label="End (*)"></v-text-field>
+            <v-container class="error--text px-0" v-if="isStartEndErr">Your event should end after it starts!</v-container>
           <v-btn type="submit" color="primary" class="mr-4">
             create event
           </v-btn>
@@ -25,7 +26,7 @@
 
 <script>
 export default {
-  props: ['closeDialog', 'popup', 'names', 'addEvent', 'defaultStart', 'rules'],
+  props: ['closeDialog', 'popup', 'names', 'addEvent', 'defaultStart', 'rules', 'isStartEndErr'],
   data: () => ({
     event: {
       name: null,
@@ -60,7 +61,6 @@ export default {
     },
     validate() {
       this.$refs.eventInputs.validate()
-      console.log(this.event)
     },
     closePopup() {
       this.event = {

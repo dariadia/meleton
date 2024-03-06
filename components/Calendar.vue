@@ -40,9 +40,10 @@
           </v-menu>
         </v-toolbar>
       </v-sheet>
-      <Popup :rules="rules" :closeDialog="closeDialog" :popup="popups.popup" :names="names" :addEvent="addEvent" />
+      <Popup :rules="rules" :closeDialog="closeDialog" :popup="popups.popup" :names="names" :addEvent="addEvent"
+        :isStartEndErr="isStartEndErr" />
       <Popup :rules="rules" :closeDialog="closeDialog" :popup="popups.popupDate" :names="names" :addEvent="addEvent"
-        :defaultStart="start" />
+        :defaultStart="start" :isStartEndErr="isStartEndErr" />
       <v-sheet height="600">
         <v-calendar ref="calendar" v-model="focus" color="primary" :events="events" :event-color="getEventColor"
           :event-margin-bottom="3" :now="today" :type="type" @click:event="showEvent" @click:more="viewDay"
@@ -57,7 +58,7 @@
                 {{ selectedEvent.name }}
               </v-toolbar-title>
               <v-toolbar-title v-else>
-                <v-textarea class="pt-4" v-model="selectedEvent.name" type="text" rows="1"
+                <v-textarea class="pt-4" :rules="rules.name" v-model="selectedEvent.name" type="text" rows="1"
                   placeholder="Change event name" background-color="grey lighten-2"></v-textarea>
               </v-toolbar-title>
             </v-toolbar>
@@ -65,14 +66,14 @@
               <v-container tag="span" v-if="currentlyEditing !== selectedEvent.id">{{ new
             Date(selectedEvent.start)?.toDateString()
                 }}</v-container>
-              <v-text-field v-else v-model="selectedEvent.start" min="1970-00-00T00:00" max="2100-01-01T00:00"
-                type="datetime-local" label="Start (*)"></v-text-field>
+              <v-text-field :rules="rules.basic" v-else v-model="selectedEvent.start" min="1970-00-00T00:00"
+                max="2100-01-01T00:00" type="datetime-local" label="Start (*)"></v-text-field>
               <v-container tag="span" v-if="currentlyEditing !== selectedEvent.id"> – </v-container>
               <v-container tag="span" v-if="currentlyEditing !== selectedEvent.id">{{ new
             Date(selectedEvent.end)?.toDateString()
                 }}</v-container>
               <v-text-field v-else v-model="selectedEvent.end" min="1970-00-00T00:00" max="2100-01-01T00:00"
-                type="datetime-local" label="End (*)"></v-text-field>
+                type="datetime-local" :rules="rules.basic" label="End (*)"></v-text-field>
               <v-divider></v-divider>
               <v-container v-if="currentlyEditing !== selectedEvent.id">{{ selectedEvent.eventType }}</v-container>
               <v-combobox v-else :items="names" v-model="selectedEvent.eventType" vuetifyjs="primary"
@@ -81,7 +82,8 @@
                 {{ selectedEvent.desc }}
               </form>
               <form v-else>
-                <v-textarea v-model="selectedEvent.desc" type="text" rows="3" placeholder="Change notification text">
+                <v-textarea v-model="selectedEvent.desc" :rules="rules.desc" type="text" rows="3"
+                  placeholder="Change notification text">
                 </v-textarea>
               </form>
             </v-card-text>
@@ -122,6 +124,7 @@ export default {
     eventType: null,
     start: null,
     end: null,
+    isStartEndErr: false,
     currentlyEditing: null,
     lastEdited: null,
     selectedEvent: {},
@@ -215,16 +218,16 @@ export default {
       localStorage.setItem(this.localStorageKey, JSON.stringify(this.events))
     },
     validateFields({ name, desc, start, end, eventType }) {
-      const isNameValid = name?.trim() && isValueValid(name)
+      const isNameValid = name?.trim()
       const isDescValid = desc && desc.length <= 300
       const isDateValid = (date) => date && typeof date === 'string'
-
-      // simplification: other data just has to be there. We could add more checks if needed.
+      const isStartEndOk = new Date(start) < new Date(end)
+      this.isStartEndErr = !isStartEndOk
       const isValid = isNameValid && isDescValid
         && isDateValid(start) && isDateValid(end)
-        && eventType && new Date(start) < new Date(end)
-
-      return { isNameValid, isDescValid, isDateValid, isValid }
+        && eventType && isStartEndOk
+        console.log(this.isStartEndErr)
+      return isValid
     },
     parseDate(date) {
       return date.replace("T", " ")
@@ -235,7 +238,7 @@ export default {
     addEvent(event) {
       const { name, desc, start, end, eventType, callback, validate } = event
       validate()
-      const { isValid } = this.validateFields({ name, desc, start, end, eventType })
+      const isValid = this.validateFields({ name, desc, start, end, eventType })
       if (isValid) {
         const _start = this.parseDate(start)
         const _end = this.parseDate(end)
@@ -282,7 +285,7 @@ export default {
       const _start = this.parseDate(event.start)
       const _end = this.parseDate(event.end)
       const _color = this.getColor(event.eventType)
-      const { isValid } = this.validateFields({ name: event.name, desc: event.desc, start: _start, end: _end, eventType: event.eventType })
+      const isValid = this.validateFields({ name: event.name, desc: event.desc, start: _start, end: _end, eventType: event.eventType })
 
       if (!isValid) return
 
