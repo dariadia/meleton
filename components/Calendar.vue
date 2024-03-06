@@ -41,9 +41,7 @@
         </v-toolbar>
       </v-sheet>
       <Popup :closeDialog="closeDialog" :popup="popups.popup" :names="names" :addEvent="addEvent" />
-      <Popup :closeDialog="closeDialog" :popup="popups.popupDate" :names="names" :addEvent="addEvent" />
-
-
+      <Popup :closeDialog="closeDialog" :popup="popups.popupDate" :names="names" :addEvent="addEvent" :defaultStart="start" />
       <v-sheet height="600">
         <v-calendar ref="calendar" v-model="focus" color="primary" :events="events" :event-color="getEventColor"
           :event-margin-bottom="3" :now="today" :type="type" @click:event="showEvent" @click:more="viewDay"

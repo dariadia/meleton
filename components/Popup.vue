@@ -19,12 +19,11 @@
 
 <script>
 export default {
-  props: ['closeDialog', 'popup', 'names', 'addEvent'],
+  props: ['closeDialog', 'popup', 'names', 'addEvent', 'defaultStart'],
   data: () => ({
     name: null,
     desc: null,
     eventType: null,
-    start: null,
     end: null,
   }),
   computed: {
@@ -34,6 +33,12 @@ export default {
         this.$emit('update:popup', value)
       },
     },
-  }
+    start: {
+      get() { return this.defaultStart },
+      set(value) {
+        this.$emit('update:defaultStart', value)
+      },
+    }
+  },
 }
 </script>
