@@ -141,9 +141,8 @@
 
 <script>
 export default {
-  props: ['checkIfHasDue'],
+  props: ['checkIfHasDue', 'localStorageKey'],
   data: () => ({
-    localStorageKey: "calendarEvents",
     dateInView: new Date().toISOString().substr(0, 10),
     today: new Date().toISOString().substr(0, 10),
     focus: new Date().toISOString().substr(0, 10),
@@ -275,7 +274,7 @@ export default {
         this.popup = false
         this.popupDate = false
         this.getEvents()
-        this._props.checkIfHasDue()
+        this.checkIfHasDue()
         alert("Success! Event has been added.")
       } else {
         const message = 'Please check that you have filled out these fields:'
@@ -311,7 +310,7 @@ export default {
       this.selectedOpen = false
       this.currentlyEditing = null
       this.getEvents()
-      this._props.checkIfHasDue()
+      this.checkIfHasDue()
     },
     deleteEvent(event) {
       this.events = this.events.filter(_event => _event.id !== event)

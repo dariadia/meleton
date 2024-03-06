@@ -5,7 +5,7 @@
       <v-container>
         <Alert v-for="item in hasDue" :key="item.id" :event="item" :dueTime="dueTime" />
       </v-container>
-      <Calendar :checkIfHasDue="checkIfHasDue" />
+      <Calendar :checkIfHasDue="checkIfHasDue" :localStorageKey="localStorageKey" />
     </v-col>
   </v-row>
 </template>
