@@ -267,7 +267,7 @@ export default {
         if (!isDateValid(start)) _message.push('event start date')
         if (!isDateValid(end)) _message.push('event end date')
         const extraMessage = desc?.length > 300 ? "Event notification must be shorter!" : ''
-        const extraTimeMessage = new Date(start) > new Date(end) ? "Your event should end after it starts!" : ''
+        const extraTimeMessage = new Date(start) >= new Date(end) ? "Your event should end after it starts!" : ''
 
         /* simplification: just alert all the errors together
           preferrably: set each error as message below its corresponding field,
@@ -303,6 +303,8 @@ export default {
       this.currentlyEditing = null
       this.getEvents()
       this.checkIfHasDue(true)
+      this.start = null
+      this.end = null
     },
     deleteEvent(event) {
       this.events = this.events.filter(_event => _event.id !== event)
@@ -310,6 +312,8 @@ export default {
       this.selectedOpen = false
       this.getEvents()
       this.checkIfHasDue()
+      this.start = null
+      this.end = null
     },
     showEvent({ nativeEvent, event }) {
       const open = () => {
