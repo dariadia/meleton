@@ -40,8 +40,8 @@
           </v-menu>
         </v-toolbar>
       </v-sheet>
-      <Popup :closeDialog="closeDialog" :popup="popups.popup" :names="names" :addEvent="addEvent" />
-      <Popup :closeDialog="closeDialog" :popup="popups.popupDate" :names="names" :addEvent="addEvent"
+      <Popup :rules="rules" :closeDialog="closeDialog" :popup="popups.popup" :names="names" :addEvent="addEvent" />
+      <Popup :rules="rules" :closeDialog="closeDialog" :popup="popups.popupDate" :names="names" :addEvent="addEvent"
         :defaultStart="start" />
       <v-sheet height="600">
         <v-calendar ref="calendar" v-model="focus" color="primary" :events="events" :event-color="getEventColor"
@@ -149,6 +149,17 @@ export default {
       'Conference',
       'Party',
     ],
+    rules: {
+      basic: [value => !!value || 'This field is required'],
+      name: [
+        value => !!value || 'Event name is required',
+        value => (value && /[^ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(value)) || 'Event name should not contain special characters',
+      ],
+      desc: [
+        value => !!value || 'Event notification text is required',
+        value => (value?.length <= 300) || 'Notification text should be less than 300 characters',
+      ],
+    }
   }),
   mounted() {
     this.getEvents()
@@ -204,8 +215,6 @@ export default {
       localStorage.setItem(this.localStorageKey, JSON.stringify(this.events))
     },
     validateFields({ name, desc, start, end, eventType }) {
-      // simplification: some basic check-up. No special symbols in event names.
-      const isValueValid = (value) => /[^ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(value)
       const isNameValid = name?.trim() && isValueValid(name)
       const isDescValid = desc && desc.length <= 300
       const isDateValid = (date) => date && typeof date === 'string'
@@ -224,8 +233,9 @@ export default {
       this.selectedEvent.eventType = event.target.value
     },
     addEvent(event) {
-      const { name, desc, start, end, eventType, callback } = event
-      const { isNameValid, isDateValid, isValid } = this.validateFields({ name, desc, start, end, eventType })
+      const { name, desc, start, end, eventType, callback, validate } = event
+      validate()
+      const { isValid } = this.validateFields({ name, desc, start, end, eventType })
       if (isValid) {
         const _start = this.parseDate(start)
         const _end = this.parseDate(end)
@@ -258,22 +268,6 @@ export default {
         this.checkIfHasDue()
         if (callback) callback()
         alert("Success! Event has been added.")
-      } else {
-        const message = 'Please check that you have filled out these fields:'
-        let _message = []
-        if (!isNameValid) _message.push('event name')
-        if (!desc) _message.push('notification text')
-        if (!eventType) _message.push('event type')
-        if (!isDateValid(start)) _message.push('event start date')
-        if (!isDateValid(end)) _message.push('event end date')
-        const extraMessage = desc?.length > 300 ? "Event notification must be shorter!" : ''
-        const extraTimeMessage = new Date(start) >= new Date(end) ? "Your event should end after it starts!" : ''
-
-        /* simplification: just alert all the errors together
-          preferrably: set each error as message below its corresponding field,
-          noteably add checks via passing :rules="rules" to the v-components
-        */
-        alert(`${message}\n${_message.join("\n")}\n\n${extraMessage}\n\n${extraTimeMessage}`)
       }
     },
     editEvent(event) {
@@ -290,11 +284,7 @@ export default {
       const _color = this.getColor(event.eventType)
       const { isValid } = this.validateFields({ name: event.name, desc: event.desc, start: _start, end: _end, eventType: event.eventType })
 
-      /* simplification: just alert all the errors together
-        preferrably: set each error as message below its corresponding field,
-        noteably add checks via passing :rules="rules" to the v-components
-      */
-      if (!isValid) return alert('Please check how you filled out the event details')
+      if (!isValid) return
 
       this.events = this.events.map(_event => _event.id !== event.id ? _event : { ...event, start: _start, end: _end, color: _color })
       this.lastEdited = { id: event.id, color: _color }
