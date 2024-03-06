@@ -226,7 +226,6 @@ export default {
       const isValid = isNameValid && isDescValid
         && isDateValid(start) && isDateValid(end)
         && eventType && isStartEndOk
-        console.log(this.isStartEndErr)
       return isValid
     },
     parseDate(date) {
