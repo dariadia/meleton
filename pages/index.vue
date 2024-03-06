@@ -14,7 +14,7 @@
 export default {
   name: 'IndexPage',
   data: () => ({
-    localStorageKey: "calendarEvents",
+    localStorageKey: "calendar_events",
     hasDue: [],
     interval: null,
     MINUTE: 60 * 1000,
