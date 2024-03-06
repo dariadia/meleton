@@ -8,15 +8,3 @@
     <Footer />
   </v-app>
 </template>
-
-<script>
-export default {
-  name: 'DefaultLayout',
-  data() {
-    return {
-      fixed: false,
-      title: 'Vuetify.js'
-    }
-  }
-}
-</script>
