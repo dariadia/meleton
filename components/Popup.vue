@@ -47,7 +47,7 @@ export default {
     /* When user fills out eventType manually and the last of all fields,
      v-combobox updates the v-model item only on the next re-render. 
      Might be a corner-case. Need to research vue-spefics.
-     Force update the value.
+     Update the value via the blur method.
     */
     getEventType(event) {
       this.event.eventType = event.target.value
