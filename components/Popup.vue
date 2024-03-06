@@ -1,12 +1,12 @@
 <template>
-  <v-dialog @click:outside="closeDialog" v-model="isOpen" max-width="500">
+  <v-dialog @click:outside="closePopup" v-model="isOpen" max-width="500">
     <v-card>
       <v-container>
         <v-form @submit.prevent="addEvent({ ...event, start })">
           <v-text-field v-model="event.name" type="text" label="Event title (*)"></v-text-field>
           <v-text-field counter="300" v-model="event.desc" type="text" label="Notification text (*)"></v-text-field>
-          <v-combobox :items="names" v-model="event.eventType" vuetifyjs="primary"
-            label="Choose event type (*)" @blur="getEventType"></v-combobox>
+          <v-combobox :items="names" v-model="event.eventType" vuetifyjs="primary" label="Choose event type (*)"
+            @blur="getEventType"></v-combobox>
           <v-text-field v-model="start" type="datetime-local" label="Start (*)"></v-text-field>
           <v-text-field v-model="event.end" type="datetime-local" label="End (*)"></v-text-field>
           <v-btn type="submit" color="primary" class="mr-4">
@@ -51,6 +51,15 @@ export default {
     */
     getEventType(event) {
       this.event.eventType = event.target.value
+    },
+    closePopup() {
+      this.event = {
+        name: null,
+        desc: null,
+        eventType: null,
+        end: null,
+      }
+      this.closeDialog()
     }
   }
 }

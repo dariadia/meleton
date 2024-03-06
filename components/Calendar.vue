@@ -41,7 +41,8 @@
         </v-toolbar>
       </v-sheet>
       <Popup :closeDialog="closeDialog" :popup="popups.popup" :names="names" :addEvent="addEvent" />
-      <Popup :closeDialog="closeDialog" :popup="popups.popupDate" :names="names" :addEvent="addEvent" :defaultStart="start" />
+      <Popup :closeDialog="closeDialog" :popup="popups.popupDate" :names="names" :addEvent="addEvent"
+        :defaultStart="start" />
       <v-sheet height="600">
         <v-calendar ref="calendar" v-model="focus" color="primary" :events="events" :event-color="getEventColor"
           :event-margin-bottom="3" :now="today" :type="type" @click:event="showEvent" @click:more="viewDay"
@@ -220,8 +221,6 @@ export default {
     addEvent(event) {
       const { name, desc, start, end, eventType } = event
       const { isNameValid, isDateValid, isValid } = this.validateFields({ name, desc, start, end, eventType })
-
-      console.log(event, eventType)
 
       if (isValid) {
         const _start = this.parseDate(start)
