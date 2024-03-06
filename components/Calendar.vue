@@ -211,7 +211,7 @@ export default {
       // simplification: other data just has to be there. We could add more checks if needed.
       const isValid = isNameValid && isDescValid
         && isDateValid(start) && isDateValid(end)
-        && eventType && start < end
+        && eventType && new Date(start) < new Date(end)
 
       return { isNameValid, isDescValid, isDateValid, isValid }
     },
@@ -222,7 +222,7 @@ export default {
       this.selectedEvent.eventType = event.target.value
     },
     addEvent(event) {
-      const { name, desc, start, end, eventType } = event
+      const { name, desc, start, end, eventType, callback } = event
       const { isNameValid, isDateValid, isValid } = this.validateFields({ name, desc, start, end, eventType })
 
       if (isValid) {
@@ -239,7 +239,7 @@ export default {
           eventType,
           /* simplification: each event type is paired with a colour
             user-input-ed event types default to the first colour */
-          color: this.getColor(this.eventType),
+          color: this.getColor(eventType),
         })
         this.setToLocalStorage()
 
@@ -255,6 +255,7 @@ export default {
         }
         this.getEvents()
         this.checkIfHasDue()
+        if (callback) callback()
         alert("Success! Event has been added.")
       } else {
         const message = 'Please check that you have filled out these fields:'
