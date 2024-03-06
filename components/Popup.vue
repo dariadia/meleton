@@ -67,7 +67,6 @@ export default {
      this param fails to pick up the time, just the date.
     */
     getTime(event) {
-      console.log(this.eventStart, event)
       this.event.start = event.replace("T", " ")
     }
   }
