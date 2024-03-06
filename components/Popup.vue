@@ -2,7 +2,7 @@
   <v-dialog @click:outside="closePopup" v-model="isOpen" max-width="500">
     <v-card>
       <v-container>
-        <v-form @submit.prevent="addEvent({ ...event, start: typeof eventStart === 'string' ? eventStart : event.start, callback: closePopup })">
+        <v-form @submit.prevent="addEvent({ ...event, callback: closePopup })">
           <v-text-field v-model="event.name" type="text" label="Event title (*)"></v-text-field>
           <v-text-field counter="300" v-model="event.desc" type="text" label="Notification text (*)"></v-text-field>
           <v-combobox :items="names" v-model="event.eventType" vuetifyjs="primary" label="Choose event type (*)"
