@@ -69,6 +69,7 @@ export default {
         eventType: null,
         end: null,
       }
+      this.$refs.eventInputs.reset()
       this.closeDialog()
     },
     /* Similar as above.
