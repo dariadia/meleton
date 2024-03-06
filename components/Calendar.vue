@@ -217,21 +217,24 @@ export default {
     parseDate(date) {
       return date.replace("T", " ")
     },
-    addEvent() {
-      const { isNameValid, isDateValid, isValid } = this.validateFields({ name: this.name, desc: this.desc, start: this.start, end: this.end, eventType: this.eventType })
+    addEvent(event) {
+      const { name, desc, start, end, eventType } = event
+      const { isNameValid, isDateValid, isValid } = this.validateFields({ name, desc, start, end, eventType })
+
+      console.log(event, eventType)
 
       if (isValid) {
-        const _start = this.parseDate(this.start)
-        const _end = this.parseDate(this.end)
+        const _start = this.parseDate(start)
+        const _end = this.parseDate(end)
 
         this.events.push({
           // simplification: use the timestamp when this event was created as its id
           id: Date.now(),
-          name: this.name,
-          desc: this.desc,
+          name,
+          desc,
           start: _start,
           end: _end,
-          eventType: this.eventType,
+          eventType,
           /* simplification: each event type is paired with a colour
             user-input-ed event types default to the first colour */
           color: this.getColor(this.eventType),
@@ -255,12 +258,12 @@ export default {
         const message = 'Please check that you have filled out these fields:'
         let _message = []
         if (!isNameValid) _message.push('event name')
-        if (!this.desc) _message.push('notification text')
-        if (!this.eventType) _message.push('event type')
-        if (!isDateValid(this.start)) _message.push('event start date')
-        if (!isDateValid(this.end)) _message.push('event end date')
-        const extraMessage = this.desc?.length > 300 ? "Event notification must be shorter!" : ''
-        const extraTimeMessage = this.start > this.end ? "Your event should end after it starts!" : ''
+        if (!desc) _message.push('notification text')
+        if (!eventType) _message.push('event type')
+        if (!isDateValid(start)) _message.push('event start date')
+        if (!isDateValid(end)) _message.push('event end date')
+        const extraMessage = desc?.length > 300 ? "Event notification must be shorter!" : ''
+        const extraTimeMessage = new Date(start) > new Date(end) ? "Your event should end after it starts!" : ''
 
         /* simplification: just alert all the errors together
         preferrably: set each error as message below its corresponding field */

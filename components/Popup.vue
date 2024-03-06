@@ -2,12 +2,13 @@
   <v-dialog @click:outside="closeDialog" v-model="isOpen" max-width="500">
     <v-card>
       <v-container>
-        <v-form @submit.prevent="addEvent">
-          <v-text-field v-model="name" type="text" label="Event title (*)"></v-text-field>
-          <v-text-field counter="300" v-model="desc" type="text" label="Notification text (*)"></v-text-field>
-          <v-combobox :items="names" v-model="eventType" vuetifyjs="primary" label="Choose event type (*)"></v-combobox>
+        <v-form @submit.prevent="addEvent({ ...event, start })">
+          <v-text-field v-model="event.name" type="text" label="Event title (*)"></v-text-field>
+          <v-text-field counter="300" v-model="event.desc" type="text" label="Notification text (*)"></v-text-field>
+          <v-combobox :items="names" v-model="event.eventType" vuetifyjs="primary"
+            label="Choose event type (*)" @blur="getEventType"></v-combobox>
           <v-text-field v-model="start" type="datetime-local" label="Start (*)"></v-text-field>
-          <v-text-field v-model="end" type="datetime-local" label="End (*)"></v-text-field>
+          <v-text-field v-model="event.end" type="datetime-local" label="End (*)"></v-text-field>
           <v-btn type="submit" color="primary" class="mr-4">
             create event
           </v-btn>
@@ -21,10 +22,12 @@
 export default {
   props: ['closeDialog', 'popup', 'names', 'addEvent', 'defaultStart'],
   data: () => ({
-    name: null,
-    desc: null,
-    eventType: null,
-    end: null,
+    event: {
+      name: null,
+      desc: null,
+      eventType: null,
+      end: null,
+    },
   }),
   computed: {
     isOpen: {
@@ -40,5 +43,15 @@ export default {
       },
     }
   },
+  methods: {
+    /* When user fills out eventType manually and the last of all fields,
+     v-combobox updates the v-model item only on the next re-render. 
+     Might be a corner-case. Need to research vue-spefics.
+     Force update the value.
+    */
+    getEventType(event) {
+      this.event.eventType = event.target.value
+    }
+  }
 }
 </script>
