@@ -3,7 +3,7 @@
     <v-col cols="12" sm="8" md="10">
       <v-container class="text-h3 mb-4 text-center">Meleton: My Calendar</v-container>
       <v-container>
-        <Alert v-for="item in hasDue" :key="item.id" :event="item" />
+        <Alert v-for="item in hasDue" :key="item.id" :event="item" :shouldUpdate="shouldUpdate" />
       </v-container>
       <Calendar :checkIfHasDue="checkIfHasDue" :localStorageKey="localStorageKey" />
     </v-col>
@@ -18,6 +18,7 @@ export default {
     hasDue: [],
     interval: null,
     MINUTE: 60 * 1000,
+    shouldUpdate: false,
   }),
   mounted() {
     this.checkIfHasDue()
@@ -27,7 +28,7 @@ export default {
     clearInterval(this.interval)
   },
   methods: {
-    checkIfHasDue() {
+    checkIfHasDue(shouldUpdate) {
       const _data = localStorage.getItem(this.localStorageKey)
       if (!_data) return
       const _events = JSON.parse(_data)
@@ -38,6 +39,7 @@ export default {
         return isFuture ? _date - HOUR <= Date.now() : _date + HOUR <= Date.now()
       }
       this.hasDue = _events.filter(event => checkTime(event.start))
+      if (shouldUpdate) this.shouldUpdate = true
     }
   }
 }

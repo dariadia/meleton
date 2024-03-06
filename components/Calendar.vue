@@ -65,12 +65,14 @@
               <v-container tag="span" v-if="currentlyEditing !== selectedEvent.id">{{ new
             Date(selectedEvent.start)?.toDateString()
                 }}</v-container>
-              <v-text-field v-else v-model="selectedEvent.start" type="datetime-local" label="Start (*)"></v-text-field>
+              <v-text-field v-else v-model="selectedEvent.start" min="1970-00-00T00:00" max="2100-01-01T00:00"
+                type="datetime-local" label="Start (*)"></v-text-field>
               <v-container tag="span" v-if="currentlyEditing !== selectedEvent.id"> – </v-container>
               <v-container tag="span" v-if="currentlyEditing !== selectedEvent.id">{{ new
             Date(selectedEvent.end)?.toDateString()
                 }}</v-container>
-              <v-text-field v-else v-model="selectedEvent.end" type="datetime-local" label="End (*)"></v-text-field>
+              <v-text-field v-else v-model="selectedEvent.end" min="1970-00-00T00:00" max="2100-01-01T00:00"
+                type="datetime-local" label="End (*)"></v-text-field>
               <v-divider></v-divider>
               <v-container v-if="currentlyEditing !== selectedEvent.id">{{ selectedEvent.eventType }}</v-container>
               <v-combobox v-else :items="names" v-model="selectedEvent.eventType" vuetifyjs="primary"
@@ -224,7 +226,6 @@ export default {
     addEvent(event) {
       const { name, desc, start, end, eventType, callback } = event
       const { isNameValid, isDateValid, isValid } = this.validateFields({ name, desc, start, end, eventType })
-
       if (isValid) {
         const _start = this.parseDate(start)
         const _end = this.parseDate(end)
@@ -279,8 +280,9 @@ export default {
       this.currentlyEditing = event.id
     },
     getColor(eventType) {
+      const defaultColor = "teal lighten-3"
       const colorInx = this.names.indexOf(eventType)
-      return this.colors[colorInx >= 0 ? colorInx : 0]
+      return colorInx >= 0 ? this.colors[colorInx] : defaultColor
     },
     updateEvent(event) {
       const _start = this.parseDate(event.start)
@@ -300,13 +302,14 @@ export default {
       this.selectedOpen = false
       this.currentlyEditing = null
       this.getEvents()
-      this.checkIfHasDue()
+      this.checkIfHasDue(true)
     },
     deleteEvent(event) {
       this.events = this.events.filter(_event => _event.id !== event)
       this.setToLocalStorage()
       this.selectedOpen = false
       this.getEvents()
+      this.checkIfHasDue()
     },
     showEvent({ nativeEvent, event }) {
       const open = () => {
