@@ -65,12 +65,14 @@
               <v-container tag="span" v-if="currentlyEditing !== selectedEvent.id">{{ new
             Date(selectedEvent.start)?.toDateString()
                 }}</v-container>
-              <v-text-field v-else v-model="selectedEvent.start" type="datetime-local" label="Start (*)"></v-text-field>
+              <v-text-field v-else v-model="selectedEvent.start" min="1970-00-00T00:00" max="2100-01-01T00:00"
+                type="datetime-local" label="Start (*)"></v-text-field>
               <v-container tag="span" v-if="currentlyEditing !== selectedEvent.id"> – </v-container>
               <v-container tag="span" v-if="currentlyEditing !== selectedEvent.id">{{ new
             Date(selectedEvent.end)?.toDateString()
                 }}</v-container>
-              <v-text-field v-else v-model="selectedEvent.end" type="datetime-local" label="End (*)"></v-text-field>
+              <v-text-field v-else v-model="selectedEvent.end" min="1970-00-00T00:00" max="2100-01-01T00:00"
+                type="datetime-local" label="End (*)"></v-text-field>
               <v-divider></v-divider>
               <v-container v-if="currentlyEditing !== selectedEvent.id">{{ selectedEvent.eventType }}</v-container>
               <v-combobox v-else :items="names" v-model="selectedEvent.eventType" vuetifyjs="primary"
