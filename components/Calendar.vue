@@ -300,7 +300,7 @@ export default {
       this.selectedOpen = false
       this.currentlyEditing = null
       this.getEvents()
-      this.checkIfHasDue()
+      this.checkIfHasDue(true)
     },
     deleteEvent(event) {
       this.events = this.events.filter(_event => _event.id !== event)
