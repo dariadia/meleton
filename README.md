@@ -32,7 +32,7 @@ $ npm start
 - Each event type currently has a specific color (* simplification and room for improvement);
 - When a user click on a specific day, a form pops up in a window where they are asked to create a new event for that day. Form fields are be checked for data correctness data and completion. All fields are required;
 - All data is saved locally in LocalStorage;
-- If there is 1 hour left before the marked event (if the application page was opened earlier) or less (e.g., say, the client opened the application 23 minutes before the event), a dialog box with a notification (notification text) and a number of -minutes remaining before the start of the event. The dialog box can be closed;
+- If there is 1 hour left before the marked event (if the application page was opened earlier) or less (e.g., say, the client opened the application 23 minutes before the event), a dialog box with a notification (notification text) and a number of -minutes remaining before the start of the event. This box has the event corresponding colour. The dialog box can be closed;
 - The user can click the button next to current month in the calendar and select a different label through a popup. For e.g., they need to open the next year;
 – The user can switch between the current month – past/next with an arrow at the top of the calendar;
 - The "today" button returns the user to the current date.
