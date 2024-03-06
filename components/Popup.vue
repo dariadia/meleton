@@ -30,7 +30,9 @@ export default {
   computed: {
     isOpen: {
       get() { return this.popup },
-      set(value) { this.$emit('update:popup', value) },
+      set(value) {
+        this.$emit('update:popup', value)
+      },
     },
   }
 }

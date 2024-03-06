@@ -3,7 +3,7 @@
     <v-col>
       <v-sheet height="64">
         <v-toolbar flat color="white">
-          <v-btn class="mr-4" color="primary" @click.stop="popup = true">
+          <v-btn class="mr-4" color="primary" @click.stop="popups.popup = true">
             New Event
           </v-btn>
           <v-btn outlined class="mr-4" @click="setToday">
@@ -40,24 +40,10 @@
           </v-menu>
         </v-toolbar>
       </v-sheet>
-      <Popup :closeDialog="closeDialog" :popup="popup" :names="names" :addEvent="addEvent" />
-      <v-dialog v-model="popupDate" @click:outside="closeDialog" max-width="500">
-        <v-card>
-          <v-container>
-            <v-form @submit.prevent="addEvent">
-              <v-text-field v-model="name" type="text" label="Event title (*)"></v-text-field>
-              <v-text-field counter="300" v-model="desc" type="text" label="Notification text (*)"></v-text-field>
-              <v-combobox :items="names" v-model="eventType" vuetifyjs="primary"
-                label="Choose event type (*)"></v-combobox>
-              <v-text-field v-model="start" type="datetime-local" label="Start (*)"></v-text-field>
-              <v-text-field v-model="end" type="datetime-local" label="End (*)"></v-text-field>
-              <v-btn type="submit" color="primary" class="mr-4">
-                create event
-              </v-btn>
-            </v-form>
-          </v-container>
-        </v-card>
-      </v-dialog>
+      <Popup :closeDialog="closeDialog" :popup="popups.popup" :names="names" :addEvent="addEvent" />
+      <Popup :closeDialog="closeDialog" :popup="popups.popupDate" :names="names" :addEvent="addEvent" />
+
+
       <v-sheet height="600">
         <v-calendar ref="calendar" v-model="focus" color="primary" :events="events" :event-color="getEventColor"
           :event-margin-bottom="3" :now="today" :type="type" @click:event="showEvent" @click:more="viewDay"
@@ -65,8 +51,8 @@
         <v-menu v-model="selectedOpen" :close-on-content-click="false" :activator="selectedElement" full-width offset-x>
           <v-card color="grey lighten-4" :width="350" flat>
             <v-toolbar :color="selectedEvent.color"">
-              <v-btn @click="deleteEvent(selectedEvent.id)" icon>
-                <v-icon>mdi-delete</v-icon>
+              <v-btn @click=" deleteEvent(selectedEvent.id)" icon>
+              <v-icon>mdi-delete</v-icon>
               </v-btn>
               <v-toolbar-title v-if="currentlyEditing !== selectedEvent.id">
                 {{ selectedEvent.name }}
@@ -77,11 +63,13 @@
               </v-toolbar-title>
             </v-toolbar>
             <v-card-text>
-              <v-container tag="span" v-if="currentlyEditing !== selectedEvent.id">{{ new Date(selectedEvent.start)?.toDateString()
+              <v-container tag="span" v-if="currentlyEditing !== selectedEvent.id">{{ new
+            Date(selectedEvent.start)?.toDateString()
                 }}</v-container>
               <v-text-field v-else v-model="selectedEvent.start" type="datetime-local" label="Start (*)"></v-text-field>
               <v-container tag="span" v-if="currentlyEditing !== selectedEvent.id"> – </v-container>
-              <v-container tag="span" v-if="currentlyEditing !== selectedEvent.id">{{ new Date(selectedEvent.end)?.toDateString()
+              <v-container tag="span" v-if="currentlyEditing !== selectedEvent.id">{{ new
+            Date(selectedEvent.end)?.toDateString()
                 }}</v-container>
               <v-text-field v-else v-model="selectedEvent.end" type="datetime-local" label="End (*)"></v-text-field>
               <v-divider></v-divider>
@@ -139,8 +127,10 @@ export default {
     selectedElement: null,
     selectedOpen: false,
     events: [],
-    popup: false,
-    popupDate: false,
+    popups: {
+      popupDate: false,
+      popup: false,
+    },
     colors: [
       'deep-purple lighten-3',
       'red lighten-3',
@@ -169,7 +159,7 @@ export default {
       this.events = JSON.parse(_data)
     },
     setPopupDate({ date, time }) {
-      this.popupDate = true
+      this.popups.popupDate = true
       this.setFocus(date)
       this.start = `${date} ${time || "00:00"}`
     },
@@ -195,7 +185,10 @@ export default {
         this.eventType = '',
         this.start = '',
         this.end = '',
-        this.popup = false
+        this.popups = {
+          popupDate: false,
+          popup: false,
+        }
     },
     setToday() {
       this.setFocus(this.today)
@@ -253,8 +246,10 @@ export default {
           this.start = '',
           this.end = ''
 
-        this.popup = false
-        this.popupDate = false
+        this.popups = {
+          popupDate: false,
+          popup: false,
+        }
         this.getEvents()
         this.checkIfHasDue()
         alert("Success! Event has been added.")
@@ -321,7 +316,7 @@ export default {
       /* User clicked on a date outside the current month:
       if we update the range then the preselect is lost.
       */
-     const isPopupOpen = this.popup || this.popupDate
+      const isPopupOpen = this.popups.popup || this.popups.popupDate
       this.start = isPopupOpen ? this.start : start
       this.end = end
     },
