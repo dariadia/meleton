@@ -2,7 +2,7 @@
   <v-dialog @click:outside="closePopup" v-model="isOpen" max-width="500">
     <v-card>
       <v-container>
-        <v-form @submit.prevent="addEvent({ ...event, start: eventStart?.time ? eventStart : event.start })">
+        <v-form @submit.prevent="addEvent({ ...event, start: typeof eventStart === 'string' ? eventStart : event.start })">
           <v-text-field v-model="event.name" type="text" label="Event title (*)"></v-text-field>
           <v-text-field counter="300" v-model="event.desc" type="text" label="Notification text (*)"></v-text-field>
           <v-combobox :items="names" v-model="event.eventType" vuetifyjs="primary" label="Choose event type (*)"
@@ -67,6 +67,7 @@ export default {
      this param fails to pick up the time, just the date.
     */
     getTime(event) {
+      console.log(this.eventStart, event)
       this.event.start = event.replace("T", " ")
     }
   }
