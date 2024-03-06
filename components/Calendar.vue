@@ -74,7 +74,7 @@
               <v-divider></v-divider>
               <v-container v-if="currentlyEditing !== selectedEvent.id">{{ selectedEvent.eventType }}</v-container>
               <v-combobox v-else :items="names" v-model="selectedEvent.eventType" vuetifyjs="primary"
-                label="Choose event type (*)"></v-combobox>
+                label="Choose event type (*)"  @blur="getEventType"></v-combobox>
               <form v-if="currentlyEditing !== selectedEvent.id">
                 {{ selectedEvent.desc }}
               </form>
@@ -217,6 +217,9 @@ export default {
     },
     parseDate(date) {
       return date.replace("T", " ")
+    },
+    getEventType(event) {
+      this.selectedEvent.eventType = event.target.value
     },
     addEvent(event) {
       const { name, desc, start, end, eventType } = event
