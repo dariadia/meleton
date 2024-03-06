@@ -232,15 +232,9 @@ export default {
       // Some basic check-up. No special symbols in event names.
       const isValueValid = (value) => /[^ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(value)
       const isNameValid = name?.trim() && isValueValid(name)
-
       const isDescValid = desc && desc.length <= 300
-
-      /* Check that date and time are filled out
-         When not filled out e.g. this.date === function
-         There should be a neater sollution, should check out more vuetifyjs docs
-         If user enters, e.g., 80:99 => the vuetifyjs element itself converts it to valid time 
-      */
       const isDateValid = (date) => date && typeof date === 'string'
+
       // Other data just has to be there. We could add more checks if needed.
       const isValid = isNameValid && isDescValid
         && isDateValid(start) && isDateValid(end)
@@ -248,21 +242,23 @@ export default {
 
       return { isNameValid, isDescValid, isDateValid, isValid }
     },
+    parseDate(date) {
+      return date.replace("T", " ")
+    },
     addEvent() {
       const { isNameValid, isDateValid, isValid } = this.validateFields({ name: this.name, desc: this.desc, start: this.start, end: this.end, eventType: this.eventType })
 
       if (isValid) {
-        const _start = this.start?.split("T")
-        const _end = this.end?.split("T")
+        const _start = this.parseDate(this.start)
+        const _end = this.parseDate(this.end)
 
-        // simplification: use the timestamp when this event was created as its id
         this.events.push({
+          // simplification: use the timestamp when this event was created as its id
           id: Date.now(),
           name: this.name,
           desc: this.desc,
-          // simplification: caused by https://github.com/dariadia/meleton/pull/2#issuecomment-1979142190
-          start: `${_start[0]} ${_start[1]}`,
-          end: `${_end[0]} ${_end[1]}`,
+          start: _start,
+          end: _end,
           eventType: this.eventType,
           // simplification: each event type is paired with a colour
           // user-input-ed event types default to the first colour
@@ -286,7 +282,7 @@ export default {
         let _message = []
         if (!isNameValid) _message.push('event name')
         if (!this.desc) _message.push('notification text')
-        if (!this.eventType) _message.push('event event type')
+        if (!this.eventType) _message.push('event type')
         if (!isDateValid(this.start)) _message.push('event start date')
         if (!isDateValid(this.end)) _message.push('event end date')
         const extraMessage = this.desc?.length > 300 ? "Event notification must be shorter!" : ''
