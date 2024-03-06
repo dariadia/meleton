@@ -279,8 +279,9 @@ export default {
       this.currentlyEditing = event.id
     },
     getColor(eventType) {
+      const defaultColor = "teal lighten-3"
       const colorInx = this.names.indexOf(eventType)
-      return this.colors[colorInx >= 0 ? colorInx : 0]
+      return colorInx >= 0 ? this.colors[colorInx] : defaultColor
     },
     updateEvent(event) {
       const _start = this.parseDate(event.start)
