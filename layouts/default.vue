@@ -5,14 +5,7 @@
         <Nuxt />
       </v-container>
     </v-main>
-    <v-footer :absolute="!fixed">
-      <v-container tag="span">
-        {{ new Date().getFullYear() }} ft.
-        <NuxtLink class="text-decoration-none" to="https://github.com/dariadia/" target="_blank" rel="noopener">
-          &copy;dariadia
-        </NuxtLink>
-      </v-container>
-    </v-footer>
+    <Footer />
   </v-app>
 </template>
 
