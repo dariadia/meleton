@@ -225,8 +225,6 @@ export default {
       const { name, desc, start, end, eventType } = event
       const { isNameValid, isDateValid, isValid } = this.validateFields({ name, desc, start, end, eventType })
 
-      console.log("time", event, this.start.time)
-
       if (isValid) {
         const _start = this.parseDate(start)
         const _end = this.parseDate(end)
