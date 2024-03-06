@@ -3,7 +3,7 @@
     <v-col>
       <v-sheet height="64">
         <v-toolbar flat color="white">
-          <v-btn class="mr-4" color="primary" dark @click.stop="popup = true">
+          <v-btn class="mr-4" color="primary" @click.stop="popup = true">
             New Event
           </v-btn>
           <v-btn outlined class="mr-4" @click="setToday">
@@ -15,14 +15,23 @@
           <v-btn fab text small @click="next">
             <v-icon small>mdi-chevron-right</v-icon>
           </v-btn>
-          <v-toolbar-title v-if="$refs.calendar">
-            {{ $refs.calendar.title }}
-          </v-toolbar-title>
-          <div class="flex-grow-1"></div>
+          <v-toolbar-title v-if="$refs.calendar">{{ $refs.calendar.title }}</v-toolbar-title>
+          <v-row class="ml-4">
+            <v-dialog v-model="monthYearPicker" width="500">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn color="primary" v-bind="attrs" v-on="on">
+                  Set M/Y
+                </v-btn>
+              </template>
+              <v-card>
+                <v-date-picker full-width v-model="dateInView" @change="goToDate" class="mt-4"></v-date-picker>
+              </v-card>
+            </v-dialog>
+          </v-row>
           <v-menu bottom right>
             <template v-slot:activator="{ on }">
               <v-btn outlined v-on="on">
-                <span>{{ typeToLabel[type] }}</span>
+                <v-container tag="span">{{ typeToLabel[type] }}</v-container>
                 <v-icon right>mdi-menu-down</v-icon>
               </v-btn>
             </template>
@@ -40,7 +49,7 @@
           </v-menu>
         </v-toolbar>
       </v-sheet>
-      <v-dialog v-model="popup" max-width="500">
+      <v-dialog @click:outside="closeDialog" v-model="popup" max-width="500">
         <v-card>
           <v-container>
             <v-form @submit.prevent="addEvent">
@@ -57,8 +66,7 @@
           </v-container>
         </v-card>
       </v-dialog>
-
-      <v-dialog v-model="popupDate" max-width="500">
+      <v-dialog v-model="popupDate" @click:outside="closeDialog" max-width="500">
         <v-card>
           <v-container>
             <v-form @submit.prevent="addEvent">
@@ -75,11 +83,10 @@
           </v-container>
         </v-card>
       </v-dialog>
-
       <v-sheet height="600">
         <v-calendar ref="calendar" v-model="focus" color="primary" :events="events" :event-color="getEventColor"
           :event-margin-bottom="3" :now="today" :type="type" @click:event="showEvent" @click:more="viewDay"
-          @click:date="setPopupDate" @change="updateRange"></v-calendar>
+          @click:time="setPopupDate" @click:date="setPopupDate" @change="updateRange"></v-calendar>
         <v-menu v-model="selectedOpen" :close-on-content-click="false" :activator="selectedElement" full-width offset-x>
           <v-card color="grey lighten-4" :width="350" flat>
             <v-toolbar :color="selectedEvent.color">
@@ -93,16 +100,17 @@
                 <v-textarea class="pt-4" v-model="selectedEvent.name" type="text" rows="1"
                   placeholder="Change event name" background-color="grey lighten-2"></v-textarea>
               </v-toolbar-title>
-              <div class="flex-grow-1"></div>
             </v-toolbar>
             <v-card-text>
-              <span v-if="currentlyEditing !== selectedEvent.id">{{ new Date(selectedEvent.start)?.toDateString() }}</span>
+              <v-container tag="span" v-if="currentlyEditing !== selectedEvent.id">{{ new Date(selectedEvent.start)?.toDateString()
+                }}</v-container>
               <v-text-field v-else v-model="selectedEvent.start" type="datetime-local" label="Start (*)"></v-text-field>
-              <span v-if="currentlyEditing !== selectedEvent.id"> – </span>
-              <span v-if="currentlyEditing !== selectedEvent.id">{{ new Date(selectedEvent.end)?.toDateString() }}</span>
+              <v-container tag="span" v-if="currentlyEditing !== selectedEvent.id"> – </v-container>
+              <v-container tag="span" v-if="currentlyEditing !== selectedEvent.id">{{ new Date(selectedEvent.end)?.toDateString()
+                }}</v-container>
               <v-text-field v-else v-model="selectedEvent.end" type="datetime-local" label="End (*)"></v-text-field>
-              <hr/>
-              <span v-if="currentlyEditing !== selectedEvent.id">{{ selectedEvent.eventType }}</span>
+              <v-divider></v-divider>
+              <v-container v-if="currentlyEditing !== selectedEvent.id">{{ selectedEvent.eventType }}</v-container>
               <v-combobox v-else :items="names" v-model="selectedEvent.eventType" vuetifyjs="primary"
                 label="Choose event type (*)"></v-combobox>
               <form v-if="currentlyEditing !== selectedEvent.id">
@@ -136,6 +144,7 @@ export default {
   props: ['checkIfHasDue'],
   data: () => ({
     localStorageKey: "calendarEvents",
+    dateInView: new Date().toISOString().substr(0, 10),
     today: new Date().toISOString().substr(0, 10),
     focus: new Date().toISOString().substr(0, 10),
     type: 'month',
@@ -144,6 +153,7 @@ export default {
       week: 'Week',
       day: 'Day',
     },
+    monthYearPicker: false,
     weekday: [1, 2, 3, 4, 5, 6, 0],
     name: null,
     desc: null,
@@ -157,33 +167,26 @@ export default {
     events: [],
     popup: false,
     popupDate: false,
-    colors: ['deep-purple lighten-3', 'red lighten-3', 'cyan darken-4', 'cyan darken-1', 'amber', 'grey darken-1'],
-    names: ['Meeting', 'Holiday', 'Travel', 'Personal event', 'Birthday', 'Conference', 'Party'],
+    colors: [
+      'deep-purple lighten-3',
+      'red lighten-3',
+      'cyan darken-4',
+      'cyan darken-1',
+      'amber',
+      'grey darken-1',
+    ],
+    names: [
+      'Meeting',
+      'Holiday',
+      'Travel',
+      'Personal event',
+      'Birthday',
+      'Conference',
+      'Party',
+    ],
   }),
   mounted() {
     this.getEvents()
-  },
-  computed: {
-    title() {
-      const { start, end } = this
-      if (!start || !end) return ''
-      const startMonth = this.monthFormatter(start)
-      const startYear = start.year
-      const startDay = start.day + start.day
-      switch (this.type) {
-        case 'month':
-          return `${startMonth} ${startYear}`
-        case 'week':
-        case 'day':
-          return `${startMonth} ${startDay} ${startYear}`
-      }
-      return ''
-    },
-    monthFormatter() {
-      return this.$refs.calendar.getFormatter({
-        timeZone: 'UTC', month: 'long',
-      })
-    }
   },
   methods: {
     getEvents() {
@@ -191,10 +194,13 @@ export default {
       if (!_data) return
       this.events = JSON.parse(_data)
     },
-    setPopupDate({ date }) {
+    goToDate() {
+      this.focus = this.dateInView
+    },
+    setPopupDate({ date, time }) {
       this.popupDate = true
       this.focus = date
-      this.start = date
+      this.start = `${date} ${time || "00:00"}`
     },
     viewDay({ date }) {
       this.focus = date
@@ -202,6 +208,13 @@ export default {
     },
     getEventColor(event) {
       return event.color
+    },
+    closeDialog() {
+      this.name = '',
+        this.desc = '',
+        this.eventType = '',
+        this.start = '',
+        this.end = ''
     },
     setToday() {
       this.focus = this.today
@@ -219,15 +232,9 @@ export default {
       // Some basic check-up. No special symbols in event names.
       const isValueValid = (value) => /[^ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(value)
       const isNameValid = name?.trim() && isValueValid(name)
-
       const isDescValid = desc && desc.length <= 300
-
-      /* Check that date and time are filled out
-         When not filled out e.g. this.date === function
-         There should be a neater sollution, should check out more vuetifyjs docs
-         If user enters, e.g., 80:99 => the vuetifyjs element itself converts it to valid time 
-      */
       const isDateValid = (date) => date && typeof date === 'string'
+
       // Other data just has to be there. We could add more checks if needed.
       const isValid = isNameValid && isDescValid
         && isDateValid(start) && isDateValid(end)
@@ -235,24 +242,27 @@ export default {
 
       return { isNameValid, isDescValid, isDateValid, isValid }
     },
+    parseDate(date) {
+      return date.replace("T", " ")
+    },
     addEvent() {
       const { isNameValid, isDateValid, isValid } = this.validateFields({ name: this.name, desc: this.desc, start: this.start, end: this.end, eventType: this.eventType })
-      const _start = this.start.split("T")
-      const _end = this.end.split("T")
 
       if (isValid) {
-        // simplification: use the timestamp when this event was created as its id
+        const _start = this.parseDate(this.start)
+        const _end = this.parseDate(this.end)
+
         this.events.push({
+          // simplification: use the timestamp when this event was created as its id
           id: Date.now(),
           name: this.name,
           desc: this.desc,
-          // simplification: caused by https://github.com/dariadia/meleton/pull/2#issuecomment-1979142190
-          start: `${_start[0]} ${_start[1]}`,
-          end: `${_end[0]} ${_end[1]}`,
+          start: _start,
+          end: _end,
           eventType: this.eventType,
           // simplification: each event type is paired with a colour
           // user-input-ed event types default to the first colour
-          color: this.getColor(this.eventType ),
+          color: this.getColor(this.eventType),
         })
         this.setToLocalStorage()
 
@@ -272,7 +282,7 @@ export default {
         let _message = []
         if (!isNameValid) _message.push('event name')
         if (!this.desc) _message.push('notification text')
-        if (!this.eventType) _message.push('event event type')
+        if (!this.eventType) _message.push('event type')
         if (!isDateValid(this.start)) _message.push('event start date')
         if (!isDateValid(this.end)) _message.push('event end date')
         const extraMessage = this.desc?.length > 300 ? "Event notification must be shorter!" : ''
@@ -287,7 +297,8 @@ export default {
       this.currentlyEditing = event.id
     },
     getColor(eventType) {
-      return this.colors[this.names.indexOf(eventType) || 0]
+      const colorInx = this.names.indexOf(eventType)
+      return this.colors[colorInx >= 0 ? colorInx : 0]
     },
     updateEvent(event) {
       const { isValid } = this.validateFields({ name: event.name, desc: event.desc, start: event.start, end: event.end, eventType: event.eventType })
@@ -295,7 +306,7 @@ export default {
          preferrably: set each error as message below its corresponding field */
       if (!isValid) return alert('Please check how you filled out the event details')
 
-      this.events = this.events.map(_event => _event.id !== event.id ? _event : { ...event, color: this.getColor(event.eventType )})
+      this.events = this.events.map(_event => _event.id !== event.id ? _event : { ...event, color: this.getColor(event.eventType) })
       this.setToLocalStorage()
       this.selectedOpen = false
       this.currentlyEditing = null

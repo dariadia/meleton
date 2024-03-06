@@ -1,12 +1,12 @@
 <template>
   <v-alert :color="event.color" ense dismissible elevation="2" icon="mdi-account" outlined prominent shaped text>
-    You have – {{ event.name }} – soon!
-   <div>{{ event.desc }}</div>
+    You have – {{ event.name }} – in {{ dueTime }} minutes!
+   <v-container>{{ event.desc }}</v-container>
   </v-alert>
 </template>
 
 <script>
 export default {
-  props: ['event'],
+  props: ['event', 'dueTime'],
 }
 </script>
