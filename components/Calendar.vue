@@ -239,7 +239,7 @@ export default {
           eventType,
           /* simplification: each event type is paired with a colour
             user-input-ed event types default to the first colour */
-          color: this.getColor(this.eventType),
+          color: this.getColor(eventType),
         })
         this.setToLocalStorage()
 
