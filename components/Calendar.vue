@@ -211,7 +211,7 @@ export default {
       // simplification: other data just has to be there. We could add more checks if needed.
       const isValid = isNameValid && isDescValid
         && isDateValid(start) && isDateValid(end)
-        && eventType && start < end
+        && eventType && new Date(start) < new Date(end)
 
       return { isNameValid, isDescValid, isDateValid, isValid }
     },
