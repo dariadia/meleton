@@ -2,12 +2,12 @@
   <v-dialog @click:outside="closePopup" v-model="isOpen" max-width="500">
     <v-card>
       <v-container>
-        <v-form @submit.prevent="addEvent({ ...event, start })">
+        <v-form @submit.prevent="addEvent({ ...event, start: eventStart?.time ? eventStart : event.start })">
           <v-text-field v-model="event.name" type="text" label="Event title (*)"></v-text-field>
           <v-text-field counter="300" v-model="event.desc" type="text" label="Notification text (*)"></v-text-field>
           <v-combobox :items="names" v-model="event.eventType" vuetifyjs="primary" label="Choose event type (*)"
             @blur="getEventType"></v-combobox>
-          <v-text-field v-model="start" type="datetime-local" label="Start (*)"></v-text-field>
+          <v-text-field @change="getTime" v-model="eventStart" type="datetime-local" label="Start (*)"></v-text-field>
           <v-text-field v-model="event.end" type="datetime-local" label="End (*)"></v-text-field>
           <v-btn type="submit" color="primary" class="mr-4">
             create event
@@ -27,6 +27,7 @@ export default {
       desc: null,
       eventType: null,
       end: null,
+      start: null,
     },
   }),
   computed: {
@@ -36,7 +37,7 @@ export default {
         this.$emit('update:popup', value)
       },
     },
-    start: {
+    eventStart: {
       get() { return this.defaultStart },
       set(value) {
         this.$emit('update:defaultStart', value)
@@ -60,6 +61,13 @@ export default {
         end: null,
       }
       this.closeDialog()
+    },
+    /* Similar as above.
+     When user has no pre-filled datetime and fills it out manually the last of all fields,
+     this param fails to pick up the time, just the date.
+    */
+    getTime(event) {
+      this.event.start = event.replace("T", " ")
     }
   }
 }
