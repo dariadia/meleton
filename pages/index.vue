@@ -41,7 +41,8 @@ export default {
       this.hasDue = _events.filter(event => checkTime(event.start))
       
       if (this.hasDue.length) {
-        // We could run this inside <Alert /> but I would rather not have two separate intervals running
+        /* simplification: We could run this inside <Alert /> 
+        but I would rather not have two separate intervals running */
         this.hasDue.forEach(event => this.calcDue(event))
       }
     },

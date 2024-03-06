@@ -229,13 +229,13 @@ export default {
       localStorage.setItem(this.localStorageKey, JSON.stringify(this.events))
     },
     validateFields({ name, desc, start, end, eventType }) {
-      // Some basic check-up. No special symbols in event names.
+      // simplification: some basic check-up. No special symbols in event names.
       const isValueValid = (value) => /[^ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(value)
       const isNameValid = name?.trim() && isValueValid(name)
       const isDescValid = desc && desc.length <= 300
       const isDateValid = (date) => date && typeof date === 'string'
 
-      // Other data just has to be there. We could add more checks if needed.
+      // simplification: other data just has to be there. We could add more checks if needed.
       const isValid = isNameValid && isDescValid
         && isDateValid(start) && isDateValid(end)
         && eventType && start < end
@@ -260,8 +260,8 @@ export default {
           start: _start,
           end: _end,
           eventType: this.eventType,
-          // simplification: each event type is paired with a colour
-          // user-input-ed event types default to the first colour
+          /* simplification: each event type is paired with a colour
+            user-input-ed event types default to the first colour */
           color: this.getColor(this.eventType),
         })
         this.setToLocalStorage()
@@ -288,8 +288,8 @@ export default {
         const extraMessage = this.desc?.length > 300 ? "Event notification must be shorter!" : ''
         const extraTimeMessage = this.start > this.end ? "Your event should end after it starts!" : ''
 
-        // simplification: just alert all the errors together
-        // preferrably: set each error as message below its corresponding field
+        /* simplification: just alert all the errors together
+        preferrably: set each error as message below its corresponding field */
         alert(`${message}\n${_message.join("\n")}\n\n${extraMessage}\n\n${extraTimeMessage}`)
       }
     },
