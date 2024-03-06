@@ -25,6 +25,8 @@ $ npm start
 - The user can add/edit/delete an event;
 - You can edit: title, text, time and type of event; the color will change automatically based on the event type binding - color;
 - If the user clicks on the day, and not on the “add new event” button, then the date in the new event is entered according to the date in the calendar where the user clicked. The time is set to "00:00" if clicked in month view – or to the time the user clicked on in week/day views. These can be editted by the user;
+– If the user clicks on a date outside the current month, then it is prompted into the event, and the calendar opens for that month. For example: March is open, the user clicks on February 29 - 02/29 00:00 is prompted in the event and the calendar flips to February;
+- If the user clicks new event” – all fields are empty;
 - If the user started to create a new event - but did not save it - and closed it, then the fields are reset and the new event must be filled out again;
 - For each event, the user has to set: a name, description, start and end times, they can either enter the event type manually or select it from the list;
 - Each event type currently has a specific color (* simplification and room for improvement);
