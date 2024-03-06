@@ -331,7 +331,11 @@ export default {
       nativeEvent.stopPropagation()
     },
     updateRange({ start, end }) {
-      this.start = start
+      /* User clicked on a date outside the current month:
+      if we update the range then the preselect is lost.
+      */
+     const isPopupOpen = this.popup || this.popupDate
+      this.start = isPopupOpen ? this.start : start
       this.end = end
     },
   }
