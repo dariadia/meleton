@@ -17,7 +17,7 @@
           </v-btn>
           <v-toolbar-title v-if="$refs.calendar">{{ $refs.calendar.title }}</v-toolbar-title>
           <v-row class="ml-4">
-            <v-dialog v-model="monthYearPicker" width="500">
+            <v-dialog v-model="isOpenYearPicker" width="500">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn color="primary" v-bind="attrs" v-on="on">
                   Set M/Y
@@ -49,23 +49,7 @@
           </v-menu>
         </v-toolbar>
       </v-sheet>
-      <v-dialog @click:outside="closeDialog" v-model="popup" max-width="500">
-        <v-card>
-          <v-container>
-            <v-form @submit.prevent="addEvent">
-              <v-text-field v-model="name" type="text" label="Event title (*)"></v-text-field>
-              <v-text-field counter="300" v-model="desc" type="text" label="Notification text (*)"></v-text-field>
-              <v-combobox :items="names" v-model="eventType" vuetifyjs="primary"
-                label="Choose event type (*)"></v-combobox>
-              <v-text-field v-model="start" type="datetime-local" label="Start (*)"></v-text-field>
-              <v-text-field v-model="end" type="datetime-local" label="End (*)"></v-text-field>
-              <v-btn type="submit" color="primary" class="mr-4">
-                create event
-              </v-btn>
-            </v-form>
-          </v-container>
-        </v-card>
-      </v-dialog>
+      <Popup :closeDialog="closeDialog" :popup="popup" :names="names" :addEvent="addEvent" />
       <v-dialog v-model="popupDate" @click:outside="closeDialog" max-width="500">
         <v-card>
           <v-container>
@@ -152,7 +136,7 @@ export default {
       week: 'Week',
       day: 'Day',
     },
-    monthYearPicker: false,
+    isOpenYearPicker: false,
     weekday: [1, 2, 3, 4, 5, 6, 0],
     name: null,
     desc: null,
@@ -213,7 +197,8 @@ export default {
         this.desc = '',
         this.eventType = '',
         this.start = '',
-        this.end = ''
+        this.end = '',
+        this.popup = false
     },
     setToday() {
       this.focus = this.today
