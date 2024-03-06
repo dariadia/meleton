@@ -222,7 +222,7 @@ export default {
       this.selectedEvent.eventType = event.target.value
     },
     addEvent(event) {
-      const { name, desc, start, end, eventType } = event
+      const { name, desc, start, end, eventType, callback } = event
       const { isNameValid, isDateValid, isValid } = this.validateFields({ name, desc, start, end, eventType })
 
       if (isValid) {
@@ -255,6 +255,7 @@ export default {
         }
         this.getEvents()
         this.checkIfHasDue()
+        if (callback) callback()
         alert("Success! Event has been added.")
       } else {
         const message = 'Please check that you have filled out these fields:'
