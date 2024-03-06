@@ -86,6 +86,7 @@
                   placeholder="Change notification text">
                 </v-textarea>
               </form>
+              <v-container class="error--text px-0" v-if="this.isStartEndErr">Your event should end after it starts!</v-container>
             </v-card-text>
             <v-card-actions>
               <v-btn text color="secondary" @click="selectedOpen = false">
