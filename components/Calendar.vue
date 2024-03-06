@@ -224,7 +224,6 @@ export default {
     addEvent(event) {
       const { name, desc, start, end, eventType, callback } = event
       const { isNameValid, isDateValid, isValid } = this.validateFields({ name, desc, start, end, eventType })
-
       if (isValid) {
         const _start = this.parseDate(start)
         const _end = this.parseDate(end)
@@ -308,6 +307,7 @@ export default {
       this.setToLocalStorage()
       this.selectedOpen = false
       this.getEvents()
+      this.checkIfHasDue()
     },
     showEvent({ nativeEvent, event }) {
       const open = () => {
