@@ -64,7 +64,7 @@
           @click:time="setPopupDate" @click:date="setPopupDate" @change="updateRange"></v-calendar>
         <v-menu v-model="selectedOpen" :close-on-content-click="false" :activator="selectedElement" full-width offset-x>
           <v-card color="grey lighten-4" :width="350" flat>
-            <v-toolbar :color="selectedEvent.color">
+            <v-toolbar :color="selectedEvent.color"">
               <v-btn @click="deleteEvent(selectedEvent.id)" icon>
                 <v-icon>mdi-delete</v-icon>
               </v-btn>
@@ -134,6 +134,7 @@ export default {
     start: null,
     end: null,
     currentlyEditing: null,
+    lastEdited: null,
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
@@ -180,6 +181,12 @@ export default {
       this.type = 'day'
     },
     getEventColor(event) {
+      /* Corner case: user changes event type, saves, clicks the same event again.
+      Yet the Calendar API is smarter and does not trigger the selectedElement activator twice
+      */
+      if (this.selectedEvent?.id === this.lastEdited?.id) {
+        this.selectedEvent.color = this.lastEdited?.color
+      }
       return event.color
     },
     closeDialog() {
@@ -277,13 +284,15 @@ export default {
     updateEvent(event) {
       const _start = this.parseDate(event.start)
       const _end = this.parseDate(event.end)
+      const _color = this.getColor(event.eventType)
       const { isValid } = this.validateFields({ name: event.name, desc: event.desc, start: _start, end: _end, eventType: event.eventType })
 
       /* simplification: same as in the "addEvent" method
          preferrably: set each error as message below its corresponding field */
       if (!isValid) return alert('Please check how you filled out the event details')
 
-      this.events = this.events.map(_event => _event.id !== event.id ? _event : { ...event, start: _start, end: _end, color: this.getColor(event.eventType) })
+      this.events = this.events.map(_event => _event.id !== event.id ? _event : { ...event, start: _start, end: _end, color: _color })
+      this.lastEdited = { id: event.id, color: _color }
       this.setToLocalStorage()
       this.selectedOpen = false
       this.currentlyEditing = null
